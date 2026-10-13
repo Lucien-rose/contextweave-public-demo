@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="ContextWeave — a continuity-first memory orchestration layer for long-running AI interactions." />
+  <title>ContextWeave｜公开演示</title>
+  <style>
+
+:root{
+  --ink:#172635;
+  --muted:#6f7c88;
+  --line:#dfe5e9;
+  --paper:#f7f8f7;
+  --panel:#ffffff;
+  --accent:#263f59;
+  --accent-soft:#edf2f5;
+  --rose:#9a6f77;
+  --green:#60786b;
+  --shadow:0 18px 55px rgba(26,45,60,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 15% 4%, rgba(96,120,107,.08), transparent 23rem),
+    radial-gradient(circle at 86% 14%, rgba(154,111,119,.06), transparent 25rem),
+    var(--paper);
+  color:var(--ink);
+  font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Arial,sans-serif;
+  line-height:1.6;
+}
+button,input{font:inherit}
+a{color:inherit;text-decoration:none}
+.shell{max-width:1240px;margin:0 auto;padding:0 28px}
+.topbar{
+  position:sticky;top:0;z-index:30;
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+  min-height:74px;
+  background:rgba(247,248,247,.86);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(223,229,233,.8)
+}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.02em}
+.brand-mark{
+  display:grid;place-items:center;width:31px;height:31px;border:1px solid var(--ink);
+  border-radius:50%;font-family:Georgia,serif;font-size:16px
+}
+.nav{display:flex;gap:24px;font-size:14px;color:var(--muted)}
+.nav a:hover{color:var(--ink)}
+.status{justify-self:end;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(96,120,107,.1)}
+.hero{padding:92px 0 68px}
+.eyebrow,.kicker{font-size:11px;letter-spacing:.17em;font-weight:700;color:var(--rose)}
+.hero h1{
+  max-width:930px;margin:12px 0 22px;
+  font-size:clamp(43px,7vw,82px);line-height:1.01;letter-spacing:-.055em;font-weight:620
+}
+.hero h1 em{font-family:Georgia,serif;font-weight:400;color:var(--green)}
+.hero-copy{max-width:750px;font-size:18px;color:var(--muted);margin:0}
+.hero-actions{display:flex;gap:12px;margin:34px 0 50px}
+.btn{padding:12px 17px;border-radius:10px;font-size:14px;font-weight:650}
+.btn.primary{background:var(--ink);color:#fff}
+.btn.ghost{border:1px solid var(--line);background:rgba(255,255,255,.55)}
+.hero-grid{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}
+.hero-grid article{padding:20px 18px 0 0}
+.hero-grid b{display:block;font-size:14px;margin-bottom:5px}
+.hero-grid span{font-size:13px;color:var(--muted)}
+.section{padding:78px 0}
+.section-heading{
+  display:grid;grid-template-columns:1fr minmax(260px,430px);gap:50px;align-items:end;margin-bottom:28px
+}
+.section h2{font-size:36px;line-height:1.08;letter-spacing:-.035em;margin:5px 0 0}
+.section-heading>p{margin:0;color:var(--muted);font-size:14px}
+.card{background:rgba(255,255,255,.88);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.demo-layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.65fr);gap:18px}
+.card-head{height:68px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+.card-head strong,.card-head span{display:block}
+.card-head strong{font-size:14px}
+.card-head div>span{font-size:11px;color:var(--muted);margin-top:1px}
+.pill{padding:5px 8px;border-radius:999px;background:var(--accent-soft);font-size:10px!important;color:var(--accent)!important;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.pill.neutral{background:#f1f2f2;color:#8a9399!important}
+.chat{height:352px;padding:18px;overflow:auto}
+.message{display:flex;gap:10px;margin-bottom:16px;align-items:flex-start}
+.message.user{justify-content:flex-end}
+.message.user>div{background:var(--ink);color:#fff;border-radius:14px 14px 4px 14px;padding:11px 13px;max-width:78%}
+.message.assistant>div{background:#f4f6f7;border-radius:4px 14px 14px 14px;padding:11px 13px;max-width:82%}
+.message p{margin:0;font-size:14px}
+.message small{display:block;color:var(--muted);font-size:10px;margin-top:5px}
+.message.user small{color:#cbd4db}
+.avatar{flex:0 0 28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);font-size:9px;font-weight:800;color:var(--accent)}
+.suggestions{display:flex;flex-wrap:wrap;gap:8px;padding:0 18px 14px}
+.suggestions button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 10px;font-size:11px;color:var(--muted);cursor:pointer}
+.suggestions button:hover{color:var(--ink);border-color:#aab7c1}
+.composer{border-top:1px solid var(--line);padding:13px;display:flex;gap:8px}
+.composer input{flex:1;border:0;background:#f4f6f7;padding:11px 12px;border-radius:10px;outline:none;color:var(--ink);min-width:0}
+.composer button{border:0;background:var(--ink);color:#fff;padding:0 17px;border-radius:10px;font-weight:650;cursor:pointer}
+.trace-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--line);border-bottom:1px solid var(--line)}
+.trace-summary div{padding:13px;background:#fff}
+.trace-summary span{display:block;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.trace-summary b{font-size:12px}
+.trace-list{padding:16px;display:grid;gap:10px}
+.trace-list.empty{color:var(--muted);font-size:12px}
+.trace-item{border:1px solid var(--line);background:#fbfcfc;border-radius:12px;padding:12px}
+.trace-item .trace-top{display:flex;justify-content:space-between;gap:8px;margin-bottom:5px}
+.trace-item strong{font-size:11px}
+.trace-item .score{font-size:9px;color:var(--green);font-weight:700}
+.trace-item p{font-size:11px;color:var(--muted);margin:0}
+.flow{display:flex;align-items:center;gap:9px;margin:30px 0 20px}
+.flow-node{flex:1;border:1px solid var(--line);background:#fff;border-radius:14px;padding:16px;min-height:114px}
+.flow-node span{font-size:10px;color:var(--rose);font-weight:700}
+.flow-node b{display:block;margin:12px 0 2px;font-size:13px}
+.flow-node small{color:var(--muted);font-size:11px}
+.flow-arrow{color:#9ba7af}
+.capability-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.capability-grid article{padding:18px;box-shadow:none}
+.capability-grid .index{font-family:Georgia,serif;color:var(--rose)}
+.capability-grid h3{font-size:15px;margin:28px 0 7px}
+.capability-grid p{font-size:12px;color:var(--muted);margin:0}
+.roadmap{display:grid;grid-template-columns:1fr 1.4fr;margin-top:18px;padding:22px 24px;box-shadow:none}
+.roadmap h3{margin:5px 0 0}
+.roadmap ul{list-style:none;padding:0;margin:0}
+.roadmap li{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #edf0f2;font-size:12px}
+.roadmap li:last-child{border-bottom:0}
+.roadmap li span{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em}
+.about{display:grid;grid-template-columns:.85fr 1.15fr;gap:80px}
+.about-copy{font-size:15px;color:var(--muted)}
+.about-copy p:first-child{font-size:19px;color:var(--ink);margin-top:0}
+.stack{display:flex;flex-wrap:wrap;gap:7px;margin:24px 0}
+.stack span{border:1px solid var(--line);background:#fff;padding:7px 9px;border-radius:8px;font-size:11px;color:var(--ink)}
+.about-note{border-left:2px solid var(--rose);padding-left:13px;font-size:12px}
+footer{border-top:1px solid var(--line);display:flex;justify-content:space-between;padding:26px 0 42px;color:var(--muted);font-size:11px}
+
+@media(max-width:880px){
+  .shell{padding:0 17px}
+  .topbar{grid-template-columns:1fr auto}.nav{display:none}.status{font-size:0}.status-dot{display:block}
+  .hero{padding-top:64px}.hero-grid{grid-template-columns:1fr 1fr}.hero-grid article{padding-bottom:8px}
+  .section{padding:58px 0}.section-heading{grid-template-columns:1fr;gap:12px}
+  .demo-layout{grid-template-columns:1fr}.trace-card{min-height:300px}
+  .flow{display:grid;grid-template-columns:1fr}.flow-arrow{transform:rotate(90deg);justify-self:center}
+  .capability-grid{grid-template-columns:1fr 1fr}
+  .roadmap,.about{grid-template-columns:1fr;gap:24px}
+}
+@media(max-width:540px){
+  .hero h1{font-size:45px}.hero-copy{font-size:16px}
+  .hero-actions{flex-direction:column;align-items:stretch}.btn{text-align:center}
+  .hero-grid{grid-template-columns:1fr}
+  .capability-grid{grid-template-columns:1fr}
+  .chat{height:315px}
+  .trace-summary{grid-template-columns:1fr 1fr}.trace-summary div:last-child{grid-column:1/-1}
+  .section h2{font-size:30px}
+}
+
+</style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="#home" aria-label="ContextWeave 首页">
+        <span class="brand-mark">C</span>
+        <span>ContextWeave</span>
+      </a>
+      <nav class="nav">
+        <a href="#demo">演示</a>
+        <a href="#memory">系统</a>
+        <a href="#about">关于</a>
+      </nav>
+      <span class="status"><span class="status-dot"></span> 公开演示 v0.2</span>
+    </header>
+
+    <main>
+      <section id="home" class="hero">
+        <div class="eyebrow">CONTINUITY-FIRST AI MEMORY</div>
+        <h1>让长期 AI 交互，记住<em>真正重要</em>的内容。</h1>
+        <p class="hero-copy">
+          ContextWeave 是一个面向长期 AI 交互场景的上下文记忆编排系统原型。它将长期记忆、跨会话上下文、事件触发与可追踪召回组织在同一套连续性框架中，而不是把记忆简化成一次普通检索。
+        </p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#demo">进入交互演示</a>
+          <a class="btn ghost" href="#about">了解项目</a>
+        </div>
+        <div class="hero-grid">
+          <article><b>长期记忆</b><span>保存并在合适时机召回长期有效的信息。</span></article>
+          <article><b>跨会话连续性</b><span>让相关上下文跨对话继续发挥作用。</span></article>
+          <article><b>事件触发</b><span>当时间或状态变化时重新唤起旧信息。</span></article>
+          <article><b>召回轨迹</b><span>展示系统用了哪些记忆，以及为什么使用它们。</span></article>
+        </div>
+      </section>
+
+      <section id="demo" class="section">
+        <div class="section-heading">
+          <div>
+            <span class="kicker">INTERACTIVE MOCK</span>
+            <h2>查看一次完整的记忆召回</h2>
+          </div>
+          <p>以下内容全部为虚构演示数据，不连接任何真实私人记忆或对话。</p>
+        </div>
+
+        <div class="demo-layout">
+          <div class="chat-card card">
+            <div class="card-head">
+              <div>
+                <strong>演示对话</strong>
+                <span>Lena · 虚构用户画像</span>
+              </div>
+              <span class="pill">模拟数据</span>
+            </div>
+
+            <div id="chat" class="chat">
+              <div class="message assistant">
+                <span class="avatar">CW</span>
+                <div>
+                  <p>你好，Lena。试着问一个需要依赖过去信息才能回答的问题。</p>
+                  <small>ContextWeave 演示代理</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="suggestions">
+              <button data-prompt="What should I remember for my 京都旅行?">京都旅行</button>
+              <button data-prompt="What are my current project priorities?">项目重点</button>
+              <button data-prompt="What coffee do I usually prefer?">咖啡偏好</button>
+            </div>
+
+            <form id="prompt-form" class="composer">
+              <input id="prompt" type="text" autocomplete="off" placeholder="可以试试：京都 / 项目 / 咖啡…" />
+              <button type="submit">发送</button>
+            </form>
+          </div>
+
+          <aside class="trace-card card">
+            <div class="card-head">
+              <div>
+                <strong>召回轨迹</strong>
+                <span>这次回答为什么拥有上下文</span>
+              </div>
+              <span id="trace-state" class="pill neutral">等待召回</span>
+            </div>
+
+            <div class="trace-summary">
+              <div><span>recall_level</span><b id="recall-level">—</b></div>
+              <div><span>used_memory</span><b id="used-memory">0</b></div>
+              <div><span>trace_id</span><b id="trace-id">—</b></div>
+            </div>
+
+            <div id="trace-list" class="trace-list empty">
+              <p>点击左侧任一示例，即可查看本次回答命中的记忆。</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="memory" class="section">
+        <div class="section-heading">
+          <div>
+            <span class="kicker">SYSTEM VIEW</span>
+            <h2>记忆不是堆积，而是一条流。</h2>
+          </div>
+          <p>公开演示仅展示产品逻辑与虚构召回轨迹，不暴露私人系统数据。</p>
+        </div>
+
+        <div class="flow">
+          <div class="flow-node"><span>01</span><b>当前对话</b><small>用户问题与局部上下文</small></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node"><span>02</span><b>Context Bridge</b><small>识别需要延续的上下文信号</small></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node"><span>03</span><b>Memory Orchestration</b><small>召回、排序、筛选与组合</small></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node"><span>04</span><b>回答 + Trace</b><small>生成结果并保留可检查的召回依据</small></div>
+        </div>
+
+        <div class="capability-grid">
+          <article class="card">
+            <span class="index">A</span>
+            <h3>长期记忆</h3>
+            <p>长期信息与短期对话上下文分离保存，只在真正相关时重新进入当前交互。</p>
+          </article>
+          <article class="card">
+            <span class="index">B</span>
+            <h3>跨会话衔接</h3>
+            <p>无需重放全部历史，也能把有用的旧上下文带入新的对话与场景。</p>
+          </article>
+          <article class="card">
+            <span class="index">C</span>
+            <h3>Event 主动触发</h3>
+            <p>时间或状态发生变化时，可以主动唤起相关记忆。</p>
+          </article>
+          <article class="card">
+            <span class="index">D</span>
+            <h3>可追踪召回</h3>
+            <p>保留召回元数据，便于解释、调试与持续迭代。</p>
+          </article>
+        </div>
+
+        <div class="roadmap card">
+          <div>
+            <span class="kicker">ROADMAP</span>
+            <h3>仍在继续完善</h3>
+          </div>
+          <ul>
+            <li>用户画像综合生成 <span>Beta</span></li>
+            <li>向量小模型整理层 <span>Planned</span></li>
+            <li>脱敏开源版本 <span>Planned</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="about" class="section about">
+        <div>
+          <span class="kicker">ABOUT</span>
+          <h2>从产品概念，到可以使用的原型。</h2>
+        </div>
+        <div class="about-copy">
+          <p>
+            ContextWeave 由项目负责人从 0 到 1 提出产品概念、功能架构与核心交互逻辑，并在 AI 协助开发下推进实现、测试与持续迭代。
+          </p>
+          <p>
+            目前项目覆盖问题定义、功能架构、交互规则、部署、域名接入与持续验证等工作。
+          </p>
+          <div class="stack">
+            <span>API</span><span>MCP</span><span>Agent / Workflow</span><span>Git</span><span>PowerShell</span>
+          </div>
+          <div class="about-note">
+            当前公开页面为完全脱敏的演示构建，不包含真实私人记忆、真实对话、凭据或内部部署信息。
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>ContextWeave · 公开演示 v0.2</span>
+      <span>让连续性变得可见。</span>
+    </footer>
+  </div>
+
+  <script>
+
+const demo = {
+  kyoto: {
+    match: ["kyoto", "trip", "travel", "京都"],
+    answer: "你之前希望京都行程尽量安静、不要塞太多景点：每天最多安排两个主要地点，保留一个完全不排计划的晚上，并尽量把热门寺院放在清晨。",
+    level: "high",
+    memories: [
+      {title:"旅行偏好 · 节奏", score:"0.93", body:"偏好低密度行程，不喜欢一天连续赶很多景点。"},
+      {title:"京都计划", score:"0.89", body:"保留一个不排计划的晚上，并安排一次清晨寺院行程。"},
+      {title:"通用偏好 · 清晨", score:"0.67", body:"在人多的目的地，倾向更早出门以避开拥挤。"}
+    ]
+  },
+  project: {
+    match: ["project", "priority", "priorities", "work", "项目", "优先"],
+    answer: "你现在的项目重点是先完成公开 Demo、保持核心架构稳定，并避免在现有流程还没有足够清晰之前继续扩展功能。你明确更看重先做出可用版本。",
+    level: "high",
+    memories: [
+      {title:"项目决策 · v0.1 范围", score:"0.96", body:"优先完成可用公开 Demo，不继续扩大功能范围。"},
+      {title:"产品原则 · 可检查性", score:"0.84", body:"召回行为需要足够透明，便于调试与解释。"},
+      {title:"Roadmap 记录", score:"0.72", body:"用户画像仍处于迭代中，对外标记为 Beta。"}
+    ]
+  },
+  coffee: {
+    match: ["coffee", "cafe", "drink", "咖啡"],
+    answer: "你通常更偏好浅烘、干净、带花香或明亮风味的咖啡，不太喜欢过度深烘、烟熏感很强的杯子。",
+    level: "medium",
+    memories: [
+      {title:"偏好 · 咖啡", score:"0.94", body:"偏好浅烘，喜欢干净、花香型风味。"},
+      {title:"偏好 · 口味", score:"0.63", body:"通常更喜欢明亮、轻盈，而不是厚重焦苦的风味。"}
+    ]
+  }
+};
+
+const chat = document.querySelector("#chat");
+const form = document.querySelector("#prompt-form");
+const input = document.querySelector("#prompt");
+const traceState = document.querySelector("#trace-state");
+const recallLevel = document.querySelector("#recall-level");
+const usedMemory = document.querySelector("#used-memory");
+const traceId = document.querySelector("#trace-id");
+const traceList = document.querySelector("#trace-list");
+
+function esc(s){
+  return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+function addMessage(text, who="user"){
+  const el = document.createElement("div");
+  el.className = `message ${who}`;
+  if(who === "assistant"){
+    el.innerHTML = `<span class="avatar">CW</span><div><p>${esc(text)}</p><small>ContextWeave 演示代理</small></div>`;
+  } else {
+    el.innerHTML = `<div><p>${esc(text)}</p><small>虚构用户</small></div>`;
+  }
+  chat.appendChild(el);
+  chat.scrollTop = chat.scrollHeight;
+}
+function choose(q){
+  const lower = q.toLowerCase();
+  return Object.values(demo).find(d => d.match.some(k => lower.includes(k))) || null;
+}
+function renderTrace(data){
+  if(!data){
+    traceState.textContent = "未命中";
+    traceState.className = "pill neutral";
+    recallLevel.textContent = "low";
+    usedMemory.textContent = "0";
+    traceId.textContent = "cw-demo-000";
+    traceList.className = "trace-list empty";
+    traceList.innerHTML = "<p>没有命中公开演示记忆，可以试试京都、项目重点或咖啡偏好。</p>";
+    return;
+  }
+  traceState.textContent = "已召回";
+  traceState.className = "pill";
+  recallLevel.textContent = data.level;
+  usedMemory.textContent = String(data.memories.length);
+  traceId.textContent = "cw-" + Math.random().toString(16).slice(2,8);
+  traceList.className = "trace-list";
+  traceList.innerHTML = data.memories.map(m => `
+    <div class="trace-item">
+      <div class="trace-top"><strong>${m.title}</strong><span class="score">score ${m.score}</span></div>
+      <p>${m.body}</p>
+    </div>`).join("");
+}
+function runPrompt(q){
+  if(!q.trim()) return;
+  addMessage(q, "user");
+  const data = choose(q);
+  window.setTimeout(() => {
+    if(data){
+      addMessage(data.answer, "assistant");
+      renderTrace(data);
+    } else {
+      addMessage("当前公开版只开放三组虚构召回路径。可以试试：京都、项目重点或咖啡偏好。", "assistant");
+      renderTrace(null);
+    }
+  }, 220);
+}
+form.addEventListener("submit", e => {
+  e.preventDefault();
+  const q = input.value;
+  input.value = "";
+  runPrompt(q);
+});
+document.querySelectorAll(".suggestions button").forEach(btn => {
+  btn.addEventListener("click", () => runPrompt(btn.dataset.prompt));
+});
+
+</script>
+</body>
+</html>
