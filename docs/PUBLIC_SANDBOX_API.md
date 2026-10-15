@@ -1,4 +1,4 @@
-# ContextWeave Public Sandbox API — v0.4 / Moss rc.3.30
+# ContextWeave Public Sandbox API — v0.4 / Moss rc.3.30.1
 
 This contract is for the public portfolio demo only. It must never route into the private Moss database.
 
