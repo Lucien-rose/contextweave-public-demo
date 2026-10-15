@@ -11,6 +11,10 @@ This contract is for the public portfolio demo only. It must never route into th
 - Visitor-written memories are temporary, session-scoped, capped, and deleted by TTL.
 - Do not expose private gateway/admin/bootstrap/sync/read-by-id/timeline routes.
 
+## GET /v1/demo/health
+
+Returns the public sandbox service/version health state. No session token is required.
+
 ## POST /v1/demo/session
 
 Creates an opaque temporary visitor session and seeds sample memories.
