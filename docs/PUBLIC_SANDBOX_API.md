@@ -1,4 +1,4 @@
-# ContextWeave Public Sandbox API — v0.3 draft
+# ContextWeave Public Sandbox API — v0.4 / Moss rc.3.30
 
 This contract is for the public portfolio demo only. It must never route into the private Moss database.
 
@@ -41,7 +41,7 @@ Deletes only visitor-written memories for the session and restores sample memori
 {"session_id":"demo_opaque_token","query":"今天下午喝什么？"}
 ```
 
-The backend preserves the raw query, builds a generic trusted `context_envelope`, and invokes the same Moss recall pipeline against the isolated demo database.
+The backend preserves the raw query, builds a generic trusted `context_envelope`, and invokes Moss Progressive Associative Recall against the isolated demo database. Candidate admission is restricted by the current session allowlist before tiering, and the same allowlist is applied to Qdrant vector queries.
 
 Public response whitelist:
 
@@ -90,3 +90,30 @@ Private Moss Instance
 
 (no database or collection shared)
 ```
+
+
+## POST /v1/demo/expand
+
+Expands one cue returned by the current visitor session. The client sends the opaque `public_id`, never an internal memory ID.
+
+```json
+{"session_id":"demo_opaque_token","public_id":"9fd4...","query":"今天下午喝什么？","detail":"relevant_chunk"}
+```
+
+The server resolves the ID only inside the same session allowlist, re-checks admission, and returns a synthetic-only public projection.
+
+## v0.4 recall fields
+
+Each returned memory keeps backward-compatible fields and adds:
+
+```json
+{
+  "tier":"T1",
+  "role":"supporting",
+  "recall_path":["query","soft anchor / context envelope","Coffee taste preference"],
+  "expandable":true,
+  "source_channels":["formal","context-envelope","vector"]
+}
+```
+
+The production private Moss database, private Qdrant collection, raw provenance and internal IDs are never reachable from this API.
