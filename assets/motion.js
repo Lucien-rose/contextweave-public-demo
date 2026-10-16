@@ -1,23 +1,6 @@
 document.documentElement.classList.add("motion-ready");
-const observer = new IntersectionObserver((entries)=>{
-  entries.forEach((entry)=>{
-    if(entry.isIntersecting){
-      entry.target.classList.add("visible");
-      observer.unobserve(entry.target);
-    }
-  });
-},{threshold:.14});
-document.querySelectorAll(".reveal").forEach((el)=>observer.observe(el));
-
-const weaveObserver = new IntersectionObserver((entries)=>{
-  entries.forEach((entry)=>{
-    if(!entry.isIntersecting) return;
-    const card=entry.target;
-    card.classList.add("is-active");
-    window.setTimeout(()=>card.classList.remove("is-active"),1100);
-    weaveObserver.unobserve(card);
-  });
-},{threshold:.5});
-document.querySelectorAll(".project-card").forEach((card,i)=>{
-  window.setTimeout(()=>weaveObserver.observe(card),i*180);
-});
+const revealObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add("visible");revealObserver.unobserve(entry.target)}}),{threshold:.12});
+document.querySelectorAll(".reveal").forEach(el=>revealObserver.observe(el));
+const weaveObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(!entry.isIntersecting)return;entry.target.classList.add("is-active");setTimeout(()=>entry.target.classList.remove("is-active"),1300);weaveObserver.unobserve(entry.target)}),{threshold:.42});
+document.querySelectorAll(".teaser").forEach((el,i)=>setTimeout(()=>weaveObserver.observe(el),i*160));
+const spine=document.querySelector(".spine-line");if(spine){spine.style.transform="scaleY(0)";requestAnimationFrame(()=>setTimeout(()=>spine.style.transform="scaleY(1)",180))}
