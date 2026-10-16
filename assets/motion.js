@@ -3,4 +3,9 @@ const revealObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{i
 document.querySelectorAll(".reveal").forEach(el=>revealObserver.observe(el));
 const weaveObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(!entry.isIntersecting)return;entry.target.classList.add("is-active");setTimeout(()=>entry.target.classList.remove("is-active"),1300);weaveObserver.unobserve(entry.target)}),{threshold:.42});
 document.querySelectorAll(".teaser").forEach((el,i)=>setTimeout(()=>weaveObserver.observe(el),i*160));
-const spine=document.querySelector(".spine-line");if(spine){spine.style.transform="scaleY(0)";requestAnimationFrame(()=>setTimeout(()=>spine.style.transform="scaleY(1)",180))}
+const spine=document.querySelector(".spine-line");
+if(spine){
+  const mobile=window.matchMedia("(max-width:900px)").matches;
+  spine.style.transform=mobile?"scaleX(0)":"scaleY(0)";
+  requestAnimationFrame(()=>setTimeout(()=>spine.style.transform=mobile?"scaleX(1)":"scaleY(1)",180));
+}
