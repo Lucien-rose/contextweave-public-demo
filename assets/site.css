@@ -290,8 +290,8 @@ a {
   stroke-width: .7;
   vector-effect: non-scaling-stroke;
   opacity: 0;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
+  stroke-dasharray: 1000 1000;
+  stroke-dashoffset: 1000;
   transition:
     stroke-dashoffset .7s cubic-bezier(.2, .7, .2, 1) .08s,
     opacity .2s ease .08s;
