@@ -11,22 +11,19 @@
   --ink:#172635;
   --muted:#6f7c88;
   --line:#dfe5e9;
-  --paper:#f7f8f7;
-  --panel:#ffffff;
+  --paper:#fffaf3;
+  --panel:#fffdf8;
   --accent:#263f59;
-  --accent-soft:#edf2f5;
-  --rose:#9a6f77;
-  --green:#60786b;
+  --accent-soft:#dcecf4;
+  --rose:#8f7279;
+  --green:#6f8b7b;
   --shadow:0 18px 55px rgba(26,45,60,.08);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
   margin:0;
-  background:
-    radial-gradient(circle at 15% 4%, rgba(96,120,107,.08), transparent 23rem),
-    radial-gradient(circle at 86% 14%, rgba(154,111,119,.06), transparent 25rem),
-    var(--paper);
+  background:var(--paper);
   color:var(--ink);
   font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Arial,sans-serif;
   line-height:1.6;
@@ -45,12 +42,12 @@ a{color:inherit;text-decoration:none}
 .brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.02em}
 .brand-mark{
   display:grid;place-items:center;width:31px;height:31px;border:1px solid var(--ink);
-  border-radius:50%;font-family:Georgia,serif;font-size:16px
+  border-radius:0;font-family:Georgia,serif;font-size:16px
 }
 .nav{display:flex;gap:24px;font-size:14px;color:var(--muted)}
 .nav a:hover{color:var(--ink)}
 .status{justify-self:end;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}
-.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(96,120,107,.1)}
+.status-dot{width:7px;height:7px;border-radius:0;background:var(--green);box-shadow:0 0 0 4px rgba(96,120,107,.1)}
 .hero{padding:92px 0 68px}
 .eyebrow,.kicker{font-size:11px;letter-spacing:.17em;font-weight:700;color:var(--rose)}
 .hero h1{
@@ -60,7 +57,7 @@ a{color:inherit;text-decoration:none}
 .hero h1 em{font-family:Georgia,serif;font-weight:400;color:var(--green)}
 .hero-copy{max-width:750px;font-size:18px;color:var(--muted);margin:0}
 .hero-actions{display:flex;gap:12px;margin:34px 0 50px}
-.btn{padding:12px 17px;border-radius:10px;font-size:14px;font-weight:650}
+.btn{padding:12px 17px;border-radius:0;font-size:14px;font-weight:650}
 .btn.primary{background:var(--ink);color:#fff}
 .btn.ghost{border:1px solid var(--line);background:rgba(255,255,255,.55)}
 .hero-grid{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}
@@ -73,42 +70,42 @@ a{color:inherit;text-decoration:none}
 }
 .section h2{font-size:36px;line-height:1.08;letter-spacing:-.035em;margin:5px 0 0}
 .section-heading>p{margin:0;color:var(--muted);font-size:14px}
-.card{background:rgba(255,255,255,.88);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.card{background:rgba(255,255,255,.88);border:1px solid var(--line);border-radius:0;box-shadow:var(--shadow)}
 .demo-layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.65fr);gap:18px}
 .card-head{height:68px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
 .card-head strong,.card-head span{display:block}
 .card-head strong{font-size:14px}
 .card-head div>span{font-size:11px;color:var(--muted);margin-top:1px}
-.pill{padding:5px 8px;border-radius:999px;background:var(--accent-soft);font-size:10px!important;color:var(--accent)!important;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.pill{padding:5px 8px;border-radius:0;background:var(--accent-soft);font-size:10px!important;color:var(--accent)!important;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
 .pill.neutral{background:#f1f2f2;color:#8a9399!important}
 .chat{height:352px;padding:18px;overflow:auto}
 .message{display:flex;gap:10px;margin-bottom:16px;align-items:flex-start}
 .message.user{justify-content:flex-end}
-.message.user>div{background:var(--ink);color:#fff;border-radius:14px 14px 4px 14px;padding:11px 13px;max-width:78%}
-.message.assistant>div{background:#f4f6f7;border-radius:4px 14px 14px 14px;padding:11px 13px;max-width:82%}
+.message.user>div{background:var(--ink);color:#fff;border-radius:0;padding:11px 13px;max-width:78%}
+.message.assistant>div{background:#f4f6f7;border-radius:0;padding:11px 13px;max-width:82%}
 .message p{margin:0;font-size:14px}
 .message small{display:block;color:var(--muted);font-size:10px;margin-top:5px}
 .message.user small{color:#cbd4db}
-.avatar{flex:0 0 28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);font-size:9px;font-weight:800;color:var(--accent)}
+.avatar{flex:0 0 28px;height:28px;border-radius:0;display:grid;place-items:center;background:var(--accent-soft);font-size:9px;font-weight:800;color:var(--accent)}
 .suggestions{display:flex;flex-wrap:wrap;gap:8px;padding:0 18px 14px}
-.suggestions button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 10px;font-size:11px;color:var(--muted);cursor:pointer}
+.suggestions button{border:1px solid var(--line);background:#fff;border-radius:0;padding:7px 10px;font-size:11px;color:var(--muted);cursor:pointer}
 .suggestions button:hover{color:var(--ink);border-color:#aab7c1}
 .composer{border-top:1px solid var(--line);padding:13px;display:flex;gap:8px}
-.composer input{flex:1;border:0;background:#f4f6f7;padding:11px 12px;border-radius:10px;outline:none;color:var(--ink);min-width:0}
-.composer button{border:0;background:var(--ink);color:#fff;padding:0 17px;border-radius:10px;font-weight:650;cursor:pointer}
+.composer input{flex:1;border:0;background:#f4f6f7;padding:11px 12px;border-radius:0;outline:none;color:var(--ink);min-width:0}
+.composer button{border:0;background:var(--ink);color:#fff;padding:0 17px;border-radius:0;font-weight:650;cursor:pointer}
 .trace-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--line);border-bottom:1px solid var(--line)}
 .trace-summary div{padding:13px;background:#fff}
 .trace-summary span{display:block;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
 .trace-summary b{font-size:12px}
 .trace-list{padding:16px;display:grid;gap:10px}
 .trace-list.empty{color:var(--muted);font-size:12px}
-.trace-item{border:1px solid var(--line);background:#fbfcfc;border-radius:12px;padding:12px}
+.trace-item{border:1px solid var(--line);background:#fbfcfc;border-radius:0;padding:12px}
 .trace-item .trace-top{display:flex;justify-content:space-between;gap:8px;margin-bottom:5px}
 .trace-item strong{font-size:11px}
 .trace-item .score{font-size:9px;color:var(--green);font-weight:700}
 .trace-item p{font-size:11px;color:var(--muted);margin:0}
 .flow{display:flex;align-items:center;gap:9px;margin:30px 0 20px}
-.flow-node{flex:1;border:1px solid var(--line);background:#fff;border-radius:14px;padding:16px;min-height:114px}
+.flow-node{flex:1;border:1px solid var(--line);background:#fff;border-radius:0;padding:16px;min-height:114px}
 .flow-node span{font-size:10px;color:var(--rose);font-weight:700}
 .flow-node b{display:block;margin:12px 0 2px;font-size:13px}
 .flow-node small{color:var(--muted);font-size:11px}
@@ -128,7 +125,7 @@ a{color:inherit;text-decoration:none}
 .about-copy{font-size:15px;color:var(--muted)}
 .about-copy p:first-child{font-size:19px;color:var(--ink);margin-top:0}
 .stack{display:flex;flex-wrap:wrap;gap:7px;margin:24px 0}
-.stack span{border:1px solid var(--line);background:#fff;padding:7px 9px;border-radius:8px;font-size:11px;color:var(--ink)}
+.stack span{border:1px solid var(--line);background:#fff;padding:7px 9px;border-radius:0;font-size:11px;color:var(--ink)}
 .about-note{border-left:2px solid var(--rose);padding-left:13px;font-size:12px}
 footer{border-top:1px solid var(--line);display:flex;justify-content:space-between;padding:26px 0 42px;color:var(--muted);font-size:11px}
 
@@ -136,25 +133,25 @@ footer{border-top:1px solid var(--line);display:flex;justify-content:space-betwe
 .memory-demo-layout{display:grid;grid-template-columns:minmax(240px,.78fr) minmax(0,1.2fr) minmax(285px,.82fr);gap:14px;align-items:stretch}
 .memory-card,.chat-card,.trace-card{min-width:0}
 .memory-list{padding:14px;display:grid;gap:9px;max-height:310px;overflow:auto}
-.memory-item{border:1px solid var(--line);border-radius:12px;padding:10px 11px;background:#fbfcfc}
+.memory-item{border:1px solid var(--line);border-radius:0;padding:10px 11px;background:#fbfcfc}
 .memory-item.sample{background:#f7f9f8}
 .memory-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
 .memory-meta span{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--rose);font-weight:700}
 .memory-meta small{font-size:9px;color:var(--muted)}
 .memory-item p{margin:0;font-size:11px;color:var(--ink)}
 .memory-actions{display:flex;gap:7px;padding:0 14px 12px}
-.memory-actions button{flex:1;border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 8px;font-size:10px;color:var(--muted);cursor:pointer}
+.memory-actions button{flex:1;border:1px solid var(--line);background:#fff;border-radius:0;padding:7px 8px;font-size:10px;color:var(--muted);cursor:pointer}
 .memory-actions button:hover{color:var(--ink)}
 .memory-form{border-top:1px solid var(--line);padding:12px}
 .memory-form label{display:block;font-size:10px;color:var(--muted);margin-bottom:7px}
 .memory-form-row{display:flex;gap:7px}
-.memory-form input{min-width:0;flex:1;border:0;background:#f4f6f7;padding:10px 11px;border-radius:9px;outline:none}
-.memory-form button{border:0;background:var(--green);color:#fff;border-radius:9px;padding:0 13px;font-weight:700;cursor:pointer}
-.demo-notice{margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.64);font-size:11px;color:var(--muted)}
+.memory-form input{min-width:0;flex:1;border:0;background:#f4f6f7;padding:10px 11px;border-radius:0;outline:none}
+.memory-form button{border:0;background:var(--green);color:#fff;border-radius:0;padding:0 13px;font-weight:700;cursor:pointer}
+.demo-notice{margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:0;background:rgba(255,255,255,.64);font-size:11px;color:var(--muted)}
 .engine-line{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--muted)}
-.engine-dot{width:7px;height:7px;border-radius:50%;background:#b1bac0}
+.engine-dot{width:7px;height:7px;border-radius:0;background:#b1bac0}
 .engine-dot.live{background:var(--green);box-shadow:0 0 0 4px rgba(96,120,107,.1)}
-.trace-item .why{margin-top:5px;font-size:10px;color:#86929b}.recall-path{margin-top:7px;padding-top:7px;border-top:1px dashed var(--line);font-size:10px;color:#6f7c88}.expand-btn{margin-top:8px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 9px;font-size:10px;color:var(--accent);cursor:pointer}.expanded-memory{margin-top:8px;padding:9px 10px;border-radius:9px;background:#f4f6f7;font-size:10px;color:var(--ink);white-space:pre-wrap}
+.trace-item .why{margin-top:5px;font-size:10px;color:#86929b}.recall-path{margin-top:7px;padding-top:7px;border-top:1px dashed var(--line);font-size:10px;color:#6f7c88}.expand-btn{margin-top:8px;border:1px solid var(--line);background:#fff;border-radius:0;padding:5px 9px;font-size:10px;color:var(--accent);cursor:pointer}.expanded-memory{margin-top:8px;padding:9px 10px;border-radius:0;background:#f4f6f7;font-size:10px;color:var(--ink);white-space:pre-wrap}
 @media(max-width:1100px){.memory-demo-layout{grid-template-columns:1fr 1fr}.trace-card{grid-column:1/-1}}
 @media(max-width:760px){.memory-demo-layout{grid-template-columns:1fr}.trace-card{grid-column:auto}}
 
@@ -183,8 +180,8 @@ footer{border-top:1px solid var(--line);display:flex;justify-content:space-betwe
 <body>
   <div class="shell">
     <header class="topbar">
-      <a class="brand" href="#home" aria-label="ContextWeave 首页">
-        <span class="brand-mark">C</span>
+      <a class="brand" href="../" aria-label="返回项目入口">
+        <span class="brand-mark">CW</span>
         <span>ContextWeave</span>
       </a>
       <nav class="nav">
@@ -192,7 +189,7 @@ footer{border-top:1px solid var(--line);display:flex;justify-content:space-betwe
         <a href="#memory">系统</a>
         <a href="#about">关于</a>
       </nav>
-      <span class="status"><span class="status-dot"></span> 公开演示 v0.4 · Moss Sandbox</span>
+      <span class="status"><span class="status-dot"></span> 公开演示 v0.4 · ContextWeave Sandbox</span>
     </header>
 
     <main>
@@ -285,7 +282,7 @@ footer{border-top:1px solid var(--line);display:flex;justify-content:space-betwe
         </div>
 
         <div class="demo-notice">
-          页面会优先连接独立的 Moss Public Sandbox；后端不可用时自动退回浏览器预览。公开沙盒只处理 synthetic sample 与当前访客的临时记忆，不连接私人 Moss 数据。
+          页面会优先连接独立的 ContextWeave Public Sandbox；后端不可用时自动退回浏览器预览。公开沙盒只处理 synthetic sample 与当前访客的临时记忆，不连接私人 Moss 数据。
         </div>
       </section>
 
@@ -367,13 +364,13 @@ footer{border-top:1px solid var(--line);display:flex;justify-content:space-betwe
     </main>
 
     <footer>
-      <span>ContextWeave · 公开演示 v0.4 · Moss Sandbox</span>
+      <span>ContextWeave · 公开演示 v0.4 · ContextWeave Sandbox</span>
       <span>让连续性变得可见。</span>
     </footer>
   </div>
 
   <script>
-const API_BASE = window.CONTEXTWEAVE_API_BASE || "https://archive.wingfindsmoss.com";
+const API_BASE = window.CONTEXTWEAVE_API_BASE || "https://archive.wingfindsmemory engine.com";
 const SAMPLE_MEMORIES = [
   {id:"sample:travel-pace",type:"preference",content:"我喜欢安静、低密度的旅行安排，每天最好不要超过两个主要地点。",sample:true},
   {id:"sample:kyoto-morning",type:"plan",content:"如果去京都，我更愿意清晨去热门寺院，避开人群。",sample:true},
@@ -399,7 +396,7 @@ function inferType(c){if(/喜欢|偏好|不喜欢|更爱|习惯/.test(c))return"
 function expandedTerms(q){const groups=[{q:/喝|饮料|下午茶|咖啡|茶|饮品/i,terms:["咖啡","茶","饮料","饮品","口味","清爽","花香","甜","酸","咖啡因"]},{q:/旅行|京都|景点|行程|出游/i,terms:["旅行","京都","寺院","景点","行程","清晨","低密度","人群"]},{q:/项目|优先|工作|先做|重点/i,terms:["项目","优先","demo","扩展","功能","先把","决定"]}];const set=new Set(q.toLowerCase().split(/[\s，。！？,.!?、/]+/).filter(Boolean));groups.forEach(g=>{if(g.q.test(q))g.terms.forEach(t=>set.add(t.toLowerCase()))});return[...set]}
 function localRecall(q){const terms=expandedTerms(q);const ranked=memories.map(m=>{const text=m.content.toLowerCase();let hit=0;terms.forEach(t=>{if(text.includes(t))hit+=t.length>2?1.4:1});if(/喜欢|偏好/.test(m.content)&&/什么|怎么|推荐|应该/.test(q))hit+=.7;return{...m,_score:hit}}).filter(m=>m._score>0).sort((a,b)=>b._score-a._score).slice(0,3);const top=ranked[0];let answer="当前 Demo Memory 里没有足够相关的信息。你可以先添加一条记忆，再换一种说法问我。";if(top){if(/喝|饮料|下午茶|咖啡|茶|饮品/i.test(q))answer="我找到了与你的饮品选择相关的记忆："+top.content+" 如果现在要选，我会优先沿着这个偏好给建议。";else if(/旅行|京都|景点|行程|出游/i.test(q))answer="我找到了与你的行程选择相关的记忆："+top.content;else if(/项目|优先|工作|先做|重点/i.test(q))answer="我找到了与你当前项目决策相关的记忆："+top.content;else answer="这次问题让我想起了："+top.content}return{route:ranked.length?"RECALL":"NO_RECALL",answer,trace_id:"preview-"+Math.random().toString(16).slice(2,8),memories:ranked.map((m,i)=>({id:m.id,memory_type:m.type,sanitized_summary:m.content,score:Math.min(.98,.62+m._score*.07-i*.03).toFixed(2),match_reason:"semantic-preview",candidate_sources:["local-preview"]}))}}
 async function api(path,options={}){const res=await fetch(API_BASE+path,{...options,headers:{"Content-Type":"application/json",...(options.headers||{})}});if(!res.ok)throw new Error("API "+res.status);return res.json()}
-async function initLive(){if(!API_BASE)return false;try{if(!sessionId){const data=await api("/v1/demo/session",{method:"POST",body:"{}"});sessionId=data.session_id;sessionStorage.setItem(SESSION_KEY,sessionId)}const data=await api("/v1/demo/memories?session_id="+encodeURIComponent(sessionId));memories=data.memories||[];engineMode.textContent="Moss Public Sandbox · Live";engineDot.classList.add("live");liveApi=true;renderMemories();return true}catch{engineMode.textContent="前端预览";engineDot.classList.remove("live");liveApi=false;return false}}
+async function initLive(){if(!API_BASE)return false;try{if(!sessionId){const data=await api("/v1/demo/session",{method:"POST",body:"{}"});sessionId=data.session_id;sessionStorage.setItem(SESSION_KEY,sessionId)}const data=await api("/v1/demo/memories?session_id="+encodeURIComponent(sessionId));memories=data.memories||[];engineMode.textContent="ContextWeave Public Sandbox · Live";engineDot.classList.add("live");liveApi=true;renderMemories();return true}catch{engineMode.textContent="前端预览";engineDot.classList.remove("live");liveApi=false;return false}}
 async function addMemory(content){if(API_BASE&&sessionId){try{const data=await api("/v1/demo/memories",{method:"POST",body:JSON.stringify({session_id:sessionId,content})});memories=data.memories||memories;renderMemories();return}catch{}}const customs=memories.filter(m=>!m.sample);if(customs.length>=MAX_CUSTOM){addMessage("本次 Demo 最多添加 16 条自定义记忆。可以先清空后再试。","assistant");return}memories.push({id:"custom:"+Date.now(),type:inferType(content),content,sample:false});saveCustom();renderMemories()}
 async function recall(q){if(API_BASE&&sessionId){try{return await api("/v1/demo/recall",{method:"POST",body:JSON.stringify({session_id:sessionId,query:q})})}catch{}}return localRecall(q)}
 async function expandMemory(publicId){
@@ -422,7 +419,7 @@ function renderTrace(data){
     const tier=m.tier||"—",role=m.role||m.memory_type||"memory";
     const path=(m.recall_path||[]).join(" → ");
     const expand=liveApi&&m.expandable?'<button class="expand-btn" data-expand="'+esc(m.public_id||m.id)+'">展开</button>':"";
-    return '<div class="trace-item" data-public-id="'+esc(m.public_id||m.id||"")+'"><div class="trace-top"><strong>'+esc(tier+" · "+role)+'</strong><span class="score">score '+esc(m.score??"—")+'</span></div><p>'+esc(m.sanitized_summary||m.excerpt||m.summary||"")+'</p><div class="why">'+esc(m.match_reason||"relevance-signal")+" · "+esc((m.candidate_sources||m.source_channels||[]).join(" + ")||"moss")+'</div>'+(path?'<div class="recall-path">'+esc(path)+'</div>':"")+expand+'<div class="expanded-memory" hidden></div></div>'
+    return '<div class="trace-item" data-public-id="'+esc(m.public_id||m.id||"")+'"><div class="trace-top"><strong>'+esc(tier+" · "+role)+'</strong><span class="score">score '+esc(m.score??"—")+'</span></div><p>'+esc(m.sanitized_summary||m.excerpt||m.summary||"")+'</p><div class="why">'+esc(m.match_reason||"relevance-signal")+" · "+esc((m.candidate_sources||m.source_channels||[]).join(" + ")||"memory engine")+'</div>'+(path?'<div class="recall-path">'+esc(path)+'</div>':"")+expand+'<div class="expanded-memory" hidden></div></div>'
   }).join("")
 }
 async function runPrompt(q){if(!q.trim())return;lastQuery=q.trim();addMessage(q,"user");input.value="";const data=await recall(q);addMessage(data.answer||(data.memories?.[0]?.sanitized_summary?"我想起了："+data.memories[0].sanitized_summary:"没有找到相关记忆。"),"assistant");renderTrace(data)}
