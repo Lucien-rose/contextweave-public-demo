@@ -274,26 +274,35 @@ a {
 .context .n3 { right: 7%; top: 34px; }
 .context .n4 { right: 6%; bottom: 25px; }
 
-.thread,
-.f-thread {
+.weave-links {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: var(--length);
-  height: 1px;
-  background: rgba(36, 48, 57, .34);
-  opacity: 0;
-  transform: rotate(var(--angle)) scaleX(0);
-  transform-origin: left center;
-  transition:
-    transform .65s cubic-bezier(.2, .7, .2, 1) .12s,
-    opacity .25s ease .12s;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
 }
 
-.context .t1 { --angle: -153deg; --length: 46%; }
-.context .t2 { --angle: 153deg; --length: 44%; }
-.context .t3 { --angle: -28deg; --length: 44%; }
-.context .t4 { --angle: 28deg; --length: 43%; }
+.weave-links line {
+  fill: none;
+  stroke: rgba(36, 48, 57, .34);
+  stroke-width: .7;
+  vector-effect: non-scaling-stroke;
+  opacity: 0;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition:
+    stroke-dashoffset .7s cubic-bezier(.2, .7, .2, 1) .08s,
+    opacity .2s ease .08s;
+}
+
+.node,
+.token,
+.memory-chip,
+.context .core {
+  z-index: 1;
+}
 
 .teaser:hover .node,
 .teaser:hover .token,
@@ -304,16 +313,14 @@ a {
 .teaser:focus-visible .memory-chip,
 .teaser:focus-visible .core {
   border-color: rgba(36, 48, 57, .28);
-  background: rgba(255, 250, 243, .78);
+  background: rgba(255, 250, 243, .88);
   color: var(--ink);
 }
 
-.teaser:hover .thread,
-.teaser:hover .f-thread,
-.teaser:focus-visible .thread,
-.teaser:focus-visible .f-thread {
-  opacity: .85;
-  transform: rotate(var(--angle)) scaleX(1);
+.teaser:hover .weave-links line,
+.teaser:focus-visible .weave-links line {
+  opacity: .82;
+  stroke-dashoffset: 0;
 }
 
 .familiar .one { left: 7%; top: 30px; }
@@ -329,11 +336,6 @@ a {
   opacity: 0;
   transform: translate(-50%, -50%);
 }
-
-.familiar .f1 { --angle: -150deg; --length: 43%; }
-.familiar .f2 { --angle: -30deg; --length: 43%; }
-.familiar .f3 { --angle: 150deg; --length: 42%; }
-.familiar .f4 { --angle: 30deg; --length: 42%; }
 
 .teaser:hover .memory-chip,
 .teaser:focus-visible .memory-chip {
