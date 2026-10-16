@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="ContextWeave — a continuity-first memory orchestration layer for long-running AI interactions." />
+  <title>ContextWeave｜公开演示</title>
+  <style>
+
+:root{
+  --ink:#172635;
+  --muted:#6f7c88;
+  --line:#dfe5e9;
+  --paper:#f7f8f7;
+  --panel:#ffffff;
+  --accent:#263f59;
+  --accent-soft:#edf2f5;
+  --rose:#9a6f77;
+  --green:#60786b;
+  --shadow:0 18px 55px rgba(26,45,60,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 15% 4%, rgba(96,120,107,.08), transparent 23rem),
+    radial-gradient(circle at 86% 14%, rgba(154,111,119,.06), transparent 25rem),
+    var(--paper);
+  color:var(--ink);
+  font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Arial,sans-serif;
+  line-height:1.6;
+}
+button,input{font:inherit}
+a{color:inherit;text-decoration:none}
+.shell{max-width:1240px;margin:0 auto;padding:0 28px}
+.topbar{
+  position:sticky;top:0;z-index:30;
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+  min-height:74px;
+  background:rgba(247,248,247,.86);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(223,229,233,.8)
+}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.02em}
+.brand-mark{
+  display:grid;place-items:center;width:31px;height:31px;border:1px solid var(--ink);
+  border-radius:50%;font-family:Georgia,serif;font-size:16px
+}
+.nav{display:flex;gap:24px;font-size:14px;color:var(--muted)}
+.nav a:hover{color:var(--ink)}
+.status{justify-self:end;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(96,120,107,.1)}
+.hero{padding:92px 0 68px}
+.eyebrow,.kicker{font-size:11px;letter-spacing:.17em;font-weight:700;color:var(--rose)}
+.hero h1{
+  max-width:930px;margin:12px 0 22px;
+  font-size:clamp(43px,7vw,82px);line-height:1.01;letter-spacing:-.055em;font-weight:620
+}
+.hero h1 em{font-family:Georgia,serif;font-weight:400;color:var(--green)}
+.hero-copy{max-width:750px;font-size:18px;color:var(--muted);margin:0}
+.hero-actions{display:flex;gap:12px;margin:34px 0 50px}
+.btn{padding:12px 17px;border-radius:10px;font-size:14px;font-weight:650}
+.btn.primary{background:var(--ink);color:#fff}
+.btn.ghost{border:1px solid var(--line);background:rgba(255,255,255,.55)}
+.hero-grid{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}
+.hero-grid article{padding:20px 18px 0 0}
+.hero-grid b{display:block;font-size:14px;margin-bottom:5px}
+.hero-grid span{font-size:13px;color:var(--muted)}
+.section{padding:78px 0}
+.section-heading{
+  display:grid;grid-template-columns:1fr minmax(260px,430px);gap:50px;align-items:end;margin-bottom:28px
+}
+.section h2{font-size:36px;line-height:1.08;letter-spacing:-.035em;margin:5px 0 0}
+.section-heading>p{margin:0;color:var(--muted);font-size:14px}
+.card{background:rgba(255,255,255,.88);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.demo-layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.65fr);gap:18px}
+.card-head{height:68px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+.card-head strong,.card-head span{display:block}
+.card-head strong{font-size:14px}
+.card-head div>span{font-size:11px;color:var(--muted);margin-top:1px}
+.pill{padding:5px 8px;border-radius:999px;background:var(--accent-soft);font-size:10px!important;color:var(--accent)!important;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.pill.neutral{background:#f1f2f2;color:#8a9399!important}
+.chat{height:352px;padding:18px;overflow:auto}
+.message{display:flex;gap:10px;margin-bottom:16px;align-items:flex-start}
+.message.user{justify-content:flex-end}
+.message.user>div{background:var(--ink);color:#fff;border-radius:14px 14px 4px 14px;padding:11px 13px;max-width:78%}
+.message.assistant>div{background:#f4f6f7;border-radius:4px 14px 14px 14px;padding:11px 13px;max-width:82%}
+.message p{margin:0;font-size:14px}
+.message small{display:block;color:var(--muted);font-size:10px;margin-top:5px}
+.message.user small{color:#cbd4db}
+.avatar{flex:0 0 28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);font-size:9px;font-weight:800;color:var(--accent)}
+.suggestions{display:flex;flex-wrap:wrap;gap:8px;padding:0 18px 14px}
+.suggestions button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 10px;font-size:11px;color:var(--muted);cursor:pointer}
+.suggestions button:hover{color:var(--ink);border-color:#aab7c1}
+.composer{border-top:1px solid var(--line);padding:13px;display:flex;gap:8px}
+.composer input{flex:1;border:0;background:#f4f6f7;padding:11px 12px;border-radius:10px;outline:none;color:var(--ink);min-width:0}
+.composer button{border:0;background:var(--ink);color:#fff;padding:0 17px;border-radius:10px;font-weight:650;cursor:pointer}
+.trace-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--line);border-bottom:1px solid var(--line)}
+.trace-summary div{padding:13px;background:#fff}
+.trace-summary span{display:block;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.trace-summary b{font-size:12px}
+.trace-list{padding:16px;display:grid;gap:10px}
+.trace-list.empty{color:var(--muted);font-size:12px}
+.trace-item{border:1px solid var(--line);background:#fbfcfc;border-radius:12px;padding:12px}
+.trace-item .trace-top{display:flex;justify-content:space-between;gap:8px;margin-bottom:5px}
+.trace-item strong{font-size:11px}
+.trace-item .score{font-size:9px;color:var(--green);font-weight:700}
+.trace-item p{font-size:11px;color:var(--muted);margin:0}
+.flow{display:flex;align-items:center;gap:9px;margin:30px 0 20px}
+.flow-node{flex:1;border:1px solid var(--line);background:#fff;border-radius:14px;padding:16px;min-height:114px}
+.flow-node span{font-size:10px;color:var(--rose);font-weight:700}
+.flow-node b{display:block;margin:12px 0 2px;font-size:13px}
+.flow-node small{color:var(--muted);font-size:11px}
+.flow-arrow{color:#9ba7af}
+.capability-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.capability-grid article{padding:18px;box-shadow:none}
+.capability-grid .index{font-family:Georgia,serif;color:var(--rose)}
+.capability-grid h3{font-size:15px;margin:28px 0 7px}
+.capability-grid p{font-size:12px;color:var(--muted);margin:0}
+.roadmap{display:grid;grid-template-columns:1fr 1.4fr;margin-top:18px;padding:22px 24px;box-shadow:none}
+.roadmap h3{margin:5px 0 0}
+.roadmap ul{list-style:none;padding:0;margin:0}
+.roadmap li{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #edf0f2;font-size:12px}
+.roadmap li:last-child{border-bottom:0}
+.roadmap li span{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em}
+.about{display:grid;grid-template-columns:.85fr 1.15fr;gap:80px}
+.about-copy{font-size:15px;color:var(--muted)}
+.about-copy p:first-child{font-size:19px;color:var(--ink);margin-top:0}
+.stack{display:flex;flex-wrap:wrap;gap:7px;margin:24px 0}
+.stack span{border:1px solid var(--line);background:#fff;padding:7px 9px;border-radius:8px;font-size:11px;color:var(--ink)}
+.about-note{border-left:2px solid var(--rose);padding-left:13px;font-size:12px}
+footer{border-top:1px solid var(--line);display:flex;justify-content:space-between;padding:26px 0 42px;color:var(--muted);font-size:11px}
+
+
+.memory-demo-layout{display:grid;grid-template-columns:minmax(240px,.78fr) minmax(0,1.2fr) minmax(285px,.82fr);gap:14px;align-items:stretch}
+.memory-card,.chat-card,.trace-card{min-width:0}
+.memory-list{padding:14px;display:grid;gap:9px;max-height:310px;overflow:auto}
+.memory-item{border:1px solid var(--line);border-radius:12px;padding:10px 11px;background:#fbfcfc}
+.memory-item.sample{background:#f7f9f8}
+.memory-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
+.memory-meta span{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--rose);font-weight:700}
+.memory-meta small{font-size:9px;color:var(--muted)}
+.memory-item p{margin:0;font-size:11px;color:var(--ink)}
+.memory-actions{display:flex;gap:7px;padding:0 14px 12px}
+.memory-actions button{flex:1;border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 8px;font-size:10px;color:var(--muted);cursor:pointer}
+.memory-actions button:hover{color:var(--ink)}
+.memory-form{border-top:1px solid var(--line);padding:12px}
+.memory-form label{display:block;font-size:10px;color:var(--muted);margin-bottom:7px}
+.memory-form-row{display:flex;gap:7px}
+.memory-form input{min-width:0;flex:1;border:0;background:#f4f6f7;padding:10px 11px;border-radius:9px;outline:none}
+.memory-form button{border:0;background:var(--green);color:#fff;border-radius:9px;padding:0 13px;font-weight:700;cursor:pointer}
+.demo-notice{margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.64);font-size:11px;color:var(--muted)}
+.engine-line{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--muted)}
+.engine-dot{width:7px;height:7px;border-radius:50%;background:#b1bac0}
+.engine-dot.live{background:var(--green);box-shadow:0 0 0 4px rgba(96,120,107,.1)}
+.trace-item .why{margin-top:5px;font-size:10px;color:#86929b}.recall-path{margin-top:7px;padding-top:7px;border-top:1px dashed var(--line);font-size:10px;color:#6f7c88}.expand-btn{margin-top:8px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 9px;font-size:10px;color:var(--accent);cursor:pointer}.expanded-memory{margin-top:8px;padding:9px 10px;border-radius:9px;background:#f4f6f7;font-size:10px;color:var(--ink);white-space:pre-wrap}
+@media(max-width:1100px){.memory-demo-layout{grid-template-columns:1fr 1fr}.trace-card{grid-column:1/-1}}
+@media(max-width:760px){.memory-demo-layout{grid-template-columns:1fr}.trace-card{grid-column:auto}}
+
+@media(max-width:880px){
+  .shell{padding:0 17px}
+  .topbar{grid-template-columns:1fr auto}.nav{display:none}.status{font-size:0}.status-dot{display:block}
+  .hero{padding-top:64px}.hero-grid{grid-template-columns:1fr 1fr}.hero-grid article{padding-bottom:8px}
+  .section{padding:58px 0}.section-heading{grid-template-columns:1fr;gap:12px}
+  .demo-layout{grid-template-columns:1fr}.trace-card{min-height:300px}
+  .flow{display:grid;grid-template-columns:1fr}.flow-arrow{transform:rotate(90deg);justify-self:center}
+  .capability-grid{grid-template-columns:1fr 1fr}
+  .roadmap,.about{grid-template-columns:1fr;gap:24px}
+}
+@media(max-width:540px){
+  .hero h1{font-size:45px}.hero-copy{font-size:16px}
+  .hero-actions{flex-direction:column;align-items:stretch}.btn{text-align:center}
+  .hero-grid{grid-template-columns:1fr}
+  .capability-grid{grid-template-columns:1fr}
+  .chat{height:315px}
+  .trace-summary{grid-template-columns:1fr 1fr}.trace-summary div:last-child{grid-column:1/-1}
+  .section h2{font-size:30px}
+}
+
+</style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="#home" aria-label="ContextWeave 首页">
+        <span class="brand-mark">C</span>
+        <span>ContextWeave</span>
+      </a>
+      <nav class="nav">
+        <a href="#demo">演示</a>
+        <a href="#memory">系统</a>
+        <a href="#about">关于</a>
+      </nav>
+      <span class="status"><span class="status-dot"></span> 公开演示 v0.4 · Moss Sandbox</span>
+    </header>
+
+    <main>
+      <section id="home" class="hero">
+        <div class="eyebrow">CONTINUITY-FIRST AI MEMORY</div>
+        <h1>让长期 AI 交互，记住<em>真正重要</em>的内容。</h1>
+        <p class="hero-copy">
+          ContextWeave 是一个面向长期 AI 交互场景的上下文记忆编排系统原型。它将长期记忆、跨会话上下文、事件触发与可追踪召回组织在同一套连续性框架中，而不是把记忆简化成一次普通检索。
+        </p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#demo">进入交互演示</a>
+          <a class="btn ghost" href="#about">了解项目</a>
+        </div>
+        <div class="hero-grid">
+          <article><b>长期记忆</b><span>保存并在合适时机召回长期有效的信息。</span></article>
+          <article><b>跨会话连续性</b><span>让相关上下文跨对话继续发挥作用。</span></article>
+          <article><b>事件触发</b><span>当时间或状态变化时重新唤起旧信息。</span></article>
+          <article><b>召回轨迹</b><span>展示系统用了哪些记忆，以及为什么使用它们。</span></article>
+        </div>
+      </section>
+
+      <section id="demo" class="section">
+        <div class="section-heading">
+          <div>
+            <span class="kicker">INTERACTIVE MEMORY SANDBOX</span>
+            <h2>亲手写入一条记忆，再换一种问法</h2>
+          </div>
+          <p>公开版只使用虚构样板数据与当前访客临时写入的内容；真实私人记忆始终与 Demo 隔离。</p>
+        </div>
+
+        <div class="memory-demo-layout">
+          <aside class="memory-card card">
+            <div class="card-head">
+              <div><strong>Demo Memory</strong><span>样板记忆 + 本次访客临时记忆</span></div>
+              <span id="memory-count" class="pill neutral">0 / 20</span>
+            </div>
+            <div id="memory-list" class="memory-list"></div>
+            <form id="memory-form" class="memory-form">
+              <label for="memory-input">添加一条记忆</label>
+              <div class="memory-form-row">
+                <input id="memory-input" type="text" maxlength="240" autocomplete="off" placeholder="比如：我喜欢喝咖啡" />
+                <button type="submit">记住</button>
+              </div>
+            </form>
+            <div class="memory-actions">
+              <button id="clear-custom" type="button">清空我添加的</button>
+              <button id="reset-demo" type="button">重置 Demo</button>
+            </div>
+          </aside>
+
+          <div class="chat-card card">
+            <div class="card-head">
+              <div><strong>演示对话</strong><span>浏览器临时 Session · 后端接入后启用 24h TTL</span></div>
+              <div class="engine-line"><span id="engine-dot" class="engine-dot"></span><span id="engine-mode">前端预览</span></div>
+            </div>
+            <div id="chat" class="chat">
+              <div class="message assistant">
+                <span class="avatar">CW</span>
+                <div>
+                  <p>先添加一条属于你的 Demo Memory，再换一种问法试试。我会把命中的记忆和召回轨迹一起显示出来。</p>
+                  <small>ContextWeave 演示代理</small>
+                </div>
+              </div>
+            </div>
+            <div class="suggestions">
+              <button data-prompt="今天下午喝什么？">下午喝什么</button>
+              <button data-prompt="我去京都旅行时应该怎么安排行程？">京都旅行</button>
+              <button data-prompt="我现在做项目最该优先什么？">项目重点</button>
+            </div>
+            <form id="prompt-form" class="composer">
+              <input id="prompt" type="text" maxlength="300" autocomplete="off" placeholder="试试换一种说法问刚才写入的记忆…" />
+              <button type="submit">发送</button>
+            </form>
+          </div>
+
+          <aside class="trace-card card">
+            <div class="card-head">
+              <div><strong>Recall Trace</strong><span>一次召回为什么成立</span></div>
+              <span id="trace-state" class="pill neutral">等待召回</span>
+            </div>
+            <div class="trace-summary">
+              <div><span>route</span><b id="recall-level">—</b></div>
+              <div><span>used_memory</span><b id="used-memory">0</b></div>
+              <div><span>trace_id</span><b id="trace-id">—</b></div>
+            </div>
+            <div id="trace-list" class="trace-list empty">
+              <p>添加记忆并提问后，这里会显示命中内容、score、match reason 与 candidate source。</p>
+            </div>
+          </aside>
+        </div>
+
+        <div class="demo-notice">
+          页面会优先连接独立的 Moss Public Sandbox；后端不可用时自动退回浏览器预览。公开沙盒只处理 synthetic sample 与当前访客的临时记忆，不连接私人 Moss 数据。
+        </div>
+      </section>
+
+      <section id="memory" class="section">
+        <div class="section-heading">
+          <div>
+            <span class="kicker">SYSTEM VIEW</span>
+            <h2>记忆不是堆积，而是一条流。</h2>
+          </div>
+          <p>当前公开演示展示产品逻辑与前端预览召回轨迹，不暴露私人系统数据。</p>
+        </div>
+
+        <div class="flow">
+          <div class="flow-node"><span>01</span><b>当前对话</b><small>用户问题与局部上下文</small></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node"><span>02</span><b>Context Bridge</b><small>识别需要延续的上下文信号</small></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node"><span>03</span><b>Memory Orchestration</b><small>召回、排序、筛选与组合</small></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node"><span>04</span><b>回答 + Trace</b><small>生成结果并保留可检查的召回依据</small></div>
+        </div>
+
+        <div class="capability-grid">
+          <article class="card">
+            <span class="index">A</span>
+            <h3>长期记忆</h3>
+            <p>长期信息与短期对话上下文分离保存，只在真正相关时重新进入当前交互。</p>
+          </article>
+          <article class="card">
+            <span class="index">B</span>
+            <h3>跨会话衔接</h3>
+            <p>无需重放全部历史，也能把有用的旧上下文带入新的对话与场景。</p>
+          </article>
+          <article class="card">
+            <span class="index">C</span>
+            <h3>Event 主动触发</h3>
+            <p>时间或状态发生变化时，可以主动唤起相关记忆。</p>
+          </article>
+          <article class="card">
+            <span class="index">D</span>
+            <h3>可追踪召回</h3>
+            <p>保留召回元数据，便于解释、调试与持续迭代。</p>
+          </article>
+        </div>
+
+        <div class="roadmap card">
+          <div>
+            <span class="kicker">ROADMAP</span>
+            <h3>仍在继续完善</h3>
+          </div>
+          <ul>
+            <li>用户画像综合生成 <span>Beta</span></li>
+            <li>向量小模型整理层 <span>Planned</span></li>
+            <li>脱敏开源版本 <span>Planned</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="about" class="section about">
+        <div>
+          <span class="kicker">ABOUT</span>
+          <h2>从产品概念，到可以使用的原型。</h2>
+        </div>
+        <div class="about-copy">
+          <p>
+            ContextWeave 由项目负责人从 0 到 1 提出产品概念、功能架构与核心交互逻辑，并在 AI 协助开发下推进实现、测试与持续迭代。
+          </p>
+          <p>
+            目前项目覆盖问题定义、功能架构、交互规则、部署、域名接入与持续验证等工作。
+          </p>
+          <div class="stack">
+            <span>API</span><span>MCP</span><span>Agent / Workflow</span><span>Git</span><span>PowerShell</span>
+          </div>
+          <div class="about-note">
+            当前公开页面为完全脱敏的演示构建，不包含真实私人记忆、真实对话、凭据或内部部署信息。
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>ContextWeave · 公开演示 v0.4 · Moss Sandbox</span>
+      <span>让连续性变得可见。</span>
+    </footer>
+  </div>
+
+  <script>
+const API_BASE = window.CONTEXTWEAVE_API_BASE || "https://archive.wingfindsmoss.com";
+const SAMPLE_MEMORIES = [
+  {id:"sample:travel-pace",type:"preference",content:"我喜欢安静、低密度的旅行安排，每天最好不要超过两个主要地点。",sample:true},
+  {id:"sample:kyoto-morning",type:"plan",content:"如果去京都，我更愿意清晨去热门寺院，避开人群。",sample:true},
+  {id:"sample:project-first",type:"decision",content:"我最近更想先把公开 Demo 做完，再考虑继续扩展功能。",sample:true},
+  {id:"sample:coffee-light",type:"preference",content:"我通常更喜欢清爽、花香、酸质明亮的咖啡。",sample:true}
+];
+const MAX_CUSTOM=16, SESSION_KEY="contextweave-demo-session-v03", CUSTOM_KEY="contextweave-demo-custom-v03";
+const memoryList=document.querySelector("#memory-list"), memoryCount=document.querySelector("#memory-count");
+const memoryForm=document.querySelector("#memory-form"), memoryInput=document.querySelector("#memory-input");
+const clearCustom=document.querySelector("#clear-custom"), resetDemo=document.querySelector("#reset-demo");
+const chat=document.querySelector("#chat"), form=document.querySelector("#prompt-form"), input=document.querySelector("#prompt");
+const traceState=document.querySelector("#trace-state"), recallLevel=document.querySelector("#recall-level");
+const usedMemory=document.querySelector("#used-memory"), traceId=document.querySelector("#trace-id"), traceList=document.querySelector("#trace-list");
+const engineMode=document.querySelector("#engine-mode"), engineDot=document.querySelector("#engine-dot");
+let sessionId=sessionStorage.getItem(SESSION_KEY)||"", memories=[...SAMPLE_MEMORIES,...loadCustom()], liveApi=false, lastQuery="";
+
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function loadCustom(){try{return JSON.parse(sessionStorage.getItem(CUSTOM_KEY)||"[]")}catch{return[]}}
+function saveCustom(){sessionStorage.setItem(CUSTOM_KEY,JSON.stringify(memories.filter(m=>!m.sample)))}
+function addMessage(text,who="user"){const el=document.createElement("div");el.className="message "+who;el.innerHTML=who==="assistant"?'<span class="avatar">CW</span><div><p>'+esc(text)+'</p><small>ContextWeave 演示代理</small></div>':'<div><p>'+esc(text)+'</p><small>本次访客</small></div>';chat.appendChild(el);chat.scrollTop=chat.scrollHeight}
+function renderMemories(){memoryList.innerHTML=memories.map(m=>'<div class="memory-item '+(m.sample?"sample":"")+'"><div class="memory-meta"><span>'+esc(m.type||"memory")+'</span><small>'+(m.sample?"样板":"本次访客")+'</small></div><p>'+esc(m.content)+'</p></div>').join("");memoryCount.textContent=memories.length+" / 20"}
+function inferType(c){if(/喜欢|偏好|不喜欢|更爱|习惯/.test(c))return"preference";if(/计划|准备|要去|打算/.test(c))return"plan";if(/优先|决定|先做|暂时/.test(c))return"decision";return"memory"}
+function expandedTerms(q){const groups=[{q:/喝|饮料|下午茶|咖啡|茶|饮品/i,terms:["咖啡","茶","饮料","饮品","口味","清爽","花香","甜","酸","咖啡因"]},{q:/旅行|京都|景点|行程|出游/i,terms:["旅行","京都","寺院","景点","行程","清晨","低密度","人群"]},{q:/项目|优先|工作|先做|重点/i,terms:["项目","优先","demo","扩展","功能","先把","决定"]}];const set=new Set(q.toLowerCase().split(/[\s，。！？,.!?、/]+/).filter(Boolean));groups.forEach(g=>{if(g.q.test(q))g.terms.forEach(t=>set.add(t.toLowerCase()))});return[...set]}
+function localRecall(q){const terms=expandedTerms(q);const ranked=memories.map(m=>{const text=m.content.toLowerCase();let hit=0;terms.forEach(t=>{if(text.includes(t))hit+=t.length>2?1.4:1});if(/喜欢|偏好/.test(m.content)&&/什么|怎么|推荐|应该/.test(q))hit+=.7;return{...m,_score:hit}}).filter(m=>m._score>0).sort((a,b)=>b._score-a._score).slice(0,3);const top=ranked[0];let answer="当前 Demo Memory 里没有足够相关的信息。你可以先添加一条记忆，再换一种说法问我。";if(top){if(/喝|饮料|下午茶|咖啡|茶|饮品/i.test(q))answer="我找到了与你的饮品选择相关的记忆："+top.content+" 如果现在要选，我会优先沿着这个偏好给建议。";else if(/旅行|京都|景点|行程|出游/i.test(q))answer="我找到了与你的行程选择相关的记忆："+top.content;else if(/项目|优先|工作|先做|重点/i.test(q))answer="我找到了与你当前项目决策相关的记忆："+top.content;else answer="这次问题让我想起了："+top.content}return{route:ranked.length?"RECALL":"NO_RECALL",answer,trace_id:"preview-"+Math.random().toString(16).slice(2,8),memories:ranked.map((m,i)=>({id:m.id,memory_type:m.type,sanitized_summary:m.content,score:Math.min(.98,.62+m._score*.07-i*.03).toFixed(2),match_reason:"semantic-preview",candidate_sources:["local-preview"]}))}}
+async function api(path,options={}){const res=await fetch(API_BASE+path,{...options,headers:{"Content-Type":"application/json",...(options.headers||{})}});if(!res.ok)throw new Error("API "+res.status);return res.json()}
+async function initLive(){if(!API_BASE)return false;try{if(!sessionId){const data=await api("/v1/demo/session",{method:"POST",body:"{}"});sessionId=data.session_id;sessionStorage.setItem(SESSION_KEY,sessionId)}const data=await api("/v1/demo/memories?session_id="+encodeURIComponent(sessionId));memories=data.memories||[];engineMode.textContent="Moss Public Sandbox · Live";engineDot.classList.add("live");liveApi=true;renderMemories();return true}catch{engineMode.textContent="前端预览";engineDot.classList.remove("live");liveApi=false;return false}}
+async function addMemory(content){if(API_BASE&&sessionId){try{const data=await api("/v1/demo/memories",{method:"POST",body:JSON.stringify({session_id:sessionId,content})});memories=data.memories||memories;renderMemories();return}catch{}}const customs=memories.filter(m=>!m.sample);if(customs.length>=MAX_CUSTOM){addMessage("本次 Demo 最多添加 16 条自定义记忆。可以先清空后再试。","assistant");return}memories.push({id:"custom:"+Date.now(),type:inferType(content),content,sample:false});saveCustom();renderMemories()}
+async function recall(q){if(API_BASE&&sessionId){try{return await api("/v1/demo/recall",{method:"POST",body:JSON.stringify({session_id:sessionId,query:q})})}catch{}}return localRecall(q)}
+async function expandMemory(publicId){
+  if(!liveApi||!sessionId)return;
+  const data=await api("/v1/demo/expand",{method:"POST",body:JSON.stringify({session_id:sessionId,public_id:publicId,query:lastQuery||"展开这条记忆",detail:"relevant_chunk"})});
+  const item=data.expansion||{};
+  const target=traceList.querySelector('[data-public-id="'+CSS.escape(publicId)+'"] .expanded-memory');
+  if(target){target.hidden=false;target.textContent=item.excerpt||"没有更多可展示内容。"}
+}
+function renderTrace(data){
+  const items=data.memories||[];
+  traceState.textContent=items.length?"已召回":"未命中";
+  traceState.className=items.length?"pill":"pill neutral";
+  recallLevel.textContent=data.route||(items.length?"RECALL":"NO_RECALL");
+  usedMemory.textContent=String(items.length);
+  traceId.textContent=data.trace_id||"—";
+  if(!items.length){traceList.className="trace-list empty";traceList.innerHTML="<p>没有命中相关记忆。试试先添加「我喜欢喝咖啡」，再问「今天下午喝什么？」。</p>";return}
+  traceList.className="trace-list";
+  traceList.innerHTML=items.map(m=>{
+    const tier=m.tier||"—",role=m.role||m.memory_type||"memory";
+    const path=(m.recall_path||[]).join(" → ");
+    const expand=liveApi&&m.expandable?'<button class="expand-btn" data-expand="'+esc(m.public_id||m.id)+'">展开</button>':"";
+    return '<div class="trace-item" data-public-id="'+esc(m.public_id||m.id||"")+'"><div class="trace-top"><strong>'+esc(tier+" · "+role)+'</strong><span class="score">score '+esc(m.score??"—")+'</span></div><p>'+esc(m.sanitized_summary||m.excerpt||m.summary||"")+'</p><div class="why">'+esc(m.match_reason||"relevance-signal")+" · "+esc((m.candidate_sources||m.source_channels||[]).join(" + ")||"moss")+'</div>'+(path?'<div class="recall-path">'+esc(path)+'</div>':"")+expand+'<div class="expanded-memory" hidden></div></div>'
+  }).join("")
+}
+async function runPrompt(q){if(!q.trim())return;lastQuery=q.trim();addMessage(q,"user");input.value="";const data=await recall(q);addMessage(data.answer||(data.memories?.[0]?.sanitized_summary?"我想起了："+data.memories[0].sanitized_summary:"没有找到相关记忆。"),"assistant");renderTrace(data)}
+memoryForm.addEventListener("submit",async e=>{e.preventDefault();const content=memoryInput.value.trim();if(!content)return;memoryInput.value="";await addMemory(content);addMessage("已把这条内容放进本次 Demo Memory。现在可以换一种说法来问我。","assistant")});
+clearCustom.addEventListener("click",async()=>{if(API_BASE&&sessionId){try{const data=await api("/v1/demo/memories/custom",{method:"DELETE",body:JSON.stringify({session_id:sessionId})});memories=data.memories||[];renderMemories();return}catch{}}memories=[...SAMPLE_MEMORIES];saveCustom();renderMemories()});
+resetDemo.addEventListener("click",()=>{sessionStorage.removeItem(SESSION_KEY);sessionStorage.removeItem(CUSTOM_KEY);location.reload()});
+form.addEventListener("submit",e=>{e.preventDefault();runPrompt(input.value)});
+document.querySelectorAll(".suggestions button").forEach(btn=>btn.addEventListener("click",()=>runPrompt(btn.dataset.prompt)));traceList.addEventListener("click",e=>{const btn=e.target.closest("[data-expand]");if(btn)expandMemory(btn.dataset.expand).catch(()=>{btn.textContent="展开失败"})});
+renderMemories();initLive();
+</script>
+</body>
+</html>
