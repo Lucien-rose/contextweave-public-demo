@@ -39,7 +39,6 @@ input { font: inherit; }
 button { color: inherit; }
 button:disabled, input:disabled { opacity: .65; cursor: wait; }
 .memory-item .memory-actions { padding: 10px 0 0; }
-.message p { white-space: pre-wrap; }
 a { color: inherit; text-decoration: none; }
 
 .shell {
@@ -214,7 +213,8 @@ a { color: inherit; text-decoration: none; }
 
 .prototype-layout {
   display: grid;
-  grid-template-columns: minmax(240px, .78fr) minmax(0, 1.18fr) minmax(300px, .88fr);
+  grid-template-columns: minmax(280px, .85fr) minmax(0, 1.6fr);
+  align-items: start;
   border-top: 1px solid var(--ink);
   border-left: 1px solid var(--ink);
 }
@@ -267,7 +267,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 .memory-list {
-  max-height: 310px;
+  max-height: 520px;
   display: grid;
   gap: 8px;
   overflow: auto;
@@ -380,62 +380,6 @@ a { color: inherit; text-decoration: none; }
   font-size: 10px;
 }
 
-.chat {
-  height: 370px;
-  overflow: auto;
-  padding: 20px;
-}
-
-.message {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  margin-bottom: 18px;
-}
-
-.message.user {
-  justify-content: flex-end;
-}
-
-.message > div {
-  max-width: 82%;
-  padding: 12px 14px;
-  border: 1px solid var(--line);
-  background: var(--paper);
-}
-
-.message.user > div {
-  border-color: var(--ink);
-  background: var(--ink);
-  color: #fff;
-}
-
-.message p {
-  margin: 0;
-  font-size: 13px;
-}
-
-.message small {
-  display: block;
-  margin-top: 5px;
-  color: var(--muted);
-  font-size: 9px;
-}
-
-.message.user small { color: #cbd4db; }
-
-.avatar {
-  flex: 0 0 28px;
-  height: 28px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--line);
-  border-radius: 50%;
-  background: var(--blue);
-  color: var(--blue-ink);
-  font-size: 9px;
-  font-weight: 800;
-}
 
 .suggestions {
   display: flex;
@@ -458,7 +402,7 @@ a { color: inherit; text-decoration: none; }
 
 .composer {
   padding: 14px;
-  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--line);
 }
 
 .composer button {
@@ -484,15 +428,6 @@ a { color: inherit; text-decoration: none; }
   background: var(--green);
 }
 
-.trace-intro {
-  padding: 20px;
-  color: #53616a;
-  font-size: 12px;
-}
-
-.trace-intro p {
-  margin: 0;
-}
 
 .trace-details {
   border-top: 1px solid var(--ink);
@@ -551,18 +486,16 @@ a { color: inherit; text-decoration: none; }
 .trace-list {
   display: grid;
   gap: 9px;
-  max-height: 310px;
-  overflow: auto;
   padding: 14px;
 }
 
 .trace-list.empty {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .trace-item {
-  padding: 11px;
+  padding: 18px;
   border: 1px solid var(--line);
   background: var(--paper);
 }
@@ -574,25 +507,20 @@ a { color: inherit; text-decoration: none; }
   margin-bottom: 5px;
 }
 
-.trace-item strong { font-size: 10px; }
-
-.score {
-  color: var(--green);
-  font-size: 9px;
-  font-weight: 700;
-}
-
 .trace-item p {
   margin: 0;
   color: #53616a;
-  font-size: 10px;
+  font-size: 14px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
 }
 
 .trace-item .why,
 .recall-path {
   margin-top: 7px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
+  overflow-wrap: anywhere;
 }
 
 .recall-path {
@@ -610,9 +538,41 @@ a { color: inherit; text-decoration: none; }
   margin-top: 8px;
   padding: 9px 10px;
   background: var(--panel-soft);
-  font-size: 9px;
+  font-size: 12px;
   white-space: pre-wrap;
 }
+
+.notice {
+  margin: 0 14px 14px;
+  padding: 12px 14px;
+  border-left: 2px solid var(--green);
+  background: var(--panel-soft);
+  color: #53616a;
+  font-size: 12px;
+  white-space: pre-wrap;
+}
+
+.result-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 14px 0;
+}
+
+.result-heading p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.result-index { color: var(--rose); font: 400 24px / 1 var(--serif); }
+
+.recall-evidence { margin-top: 14px; border-top: 1px solid var(--line); }
+.recall-evidence summary { padding-top: 10px; cursor: pointer; color: var(--muted); font-size: 11px; }
+.evidence-meta { display: flex; gap: 16px; margin-top: 10px; color: var(--green); font-size: 11px; }
+.memory-history { margin-top: 10px; padding: 10px; background: var(--panel-soft); font-size: 11px; white-space: pre-wrap; }
 
 .demo-notice {
   display: grid;
@@ -692,15 +652,6 @@ a { color: inherit; text-decoration: none; }
   text-transform: uppercase;
 }
 
-@media (max-width: 1050px) {
-  .prototype-layout {
-    grid-template-columns: 1fr 1.25fr;
-  }
-
-  .trace-card {
-    grid-column: 1 / -1;
-  }
-}
 
 @media (max-width: 900px) {
   .hero,
@@ -735,9 +686,6 @@ a { color: inherit; text-decoration: none; }
     grid-template-columns: 1fr;
   }
 
-  .trace-card {
-    grid-column: auto;
-  }
 
   .scope-note > div + div {
     padding-left: 0;
@@ -786,9 +734,6 @@ a { color: inherit; text-decoration: none; }
     font-size: 44px;
   }
 
-  .chat {
-    height: 330px;
-  }
 
   .trace-summary {
     grid-template-columns: 1fr;
@@ -841,13 +786,13 @@ a { color: inherit; text-decoration: none; }
         <div class="section-title">
           <h2>看看一段过去，<br>怎样重新回到现在。</h2>
         </div>
-        <div class="section-note">不需要理解召回、排序或向量。先把它当成一次普通对话。</div>
+        <div class="section-note">写下信息，再换一种表达来找它。不用先理解排序或向量。</div>
       </div>
 
       <div class="how-it-works">
         <article><span class="step">01</span><h3>告诉它一件事</h3><p>写下一条以后可能会用得上的信息。</p></article>
         <article><span class="step">02</span><h3>换一种说法再问</h3><p>不用重复原句，像平时聊天一样提问。</p></article>
-        <article><span class="step">03</span><h3>看看它为什么想起来</h3><p>回答之后，再决定要不要展开技术轨迹。</p></article>
+        <article><span class="step">03</span><h3>看看它找回了什么</h3><p>直接阅读相关记忆，需要时再展开召回依据。</p></article>
       </div>
     </section>
 
@@ -856,7 +801,7 @@ a { color: inherit; text-decoration: none; }
         <div class="section-index"><b>01 / 亲手试一次</b>临时记忆沙盒</div>
         <div class="section-title">
           <h2>先写下一件事，<br>再看看它会不会回来。</h2>
-          <p>左边是本次体验的临时记忆，中间是当前对话，右边只在你想深挖时解释“为什么会找到它”。</p>
+          <p>左边保存和更新临时记忆，右边提问并查看召回结果。每条结果都能继续展开，检查它为什么出现。</p>
         </div>
         <div class="section-note">最简单的测试：添加“我喜欢喝咖啡”，然后不要重复这句话，直接问“今天下午喝什么？”</div>
       </div>
@@ -885,56 +830,40 @@ a { color: inherit; text-decoration: none; }
           </div>
         </aside>
 
-        <div class="prototype-panel chat-card">
+        <section class="prototype-panel recall-card" aria-label="记忆召回">
           <div class="panel-head">
-            <div><strong>现在，换一种说法问我</strong><span>看看系统会不会想起刚才那件事</span></div>
+            <div><strong>这次找回了什么？</strong><span>换一种说法提问，直接查看相关记忆</span></div>
             <div class="engine-line"><span id="engine-dot" class="engine-dot"></span><span id="engine-mode">正在连接记忆服务…</span></div>
           </div>
 
-          <div id="chat" class="chat">
-            <div class="message assistant">
-              <span class="avatar">CW</span>
-              <div>
-                <p>先在左边写下一件事，再换一种方式问我。找到相关过去时，我会把它带回回答。</p>
-                <small>ContextWeave 公开原型</small>
-              </div>
-            </div>
-          </div>
-
+          <form id="prompt-form" class="composer">
+            <input id="prompt" type="text" maxlength="300" autocomplete="off" aria-label="召回问题" placeholder="比如：去哪里旅行？">
+            <button type="submit">查找</button>
+          </form>
           <div class="suggestions">
             <button data-prompt="今天下午喝什么？">下午喝什么</button>
-            <button data-prompt="我去京都旅行时应该怎么安排行程？">京都旅行</button>
+            <button data-prompt="去哪里旅行？">旅行去哪里</button>
             <button data-prompt="我现在做项目最该优先什么？">项目重点</button>
           </div>
 
-          <form id="prompt-form" class="composer">
-            <input id="prompt" type="text" maxlength="300" autocomplete="off" placeholder="不用重复原句，像平时一样问…">
-            <button type="submit">发送</button>
-          </form>
-        </div>
-
-        <aside class="prototype-panel trace-card">
-          <div class="panel-head">
-            <div><strong>为什么想起这件事？</strong><span>解释层，不影响正常体验</span></div>
+          <div id="chat" class="notice" role="status" aria-live="polite" hidden></div>
+          <div class="result-heading">
+            <p id="current-query">先写下一件事，再换一种说法来查找。</p>
             <span id="trace-state" class="pill neutral">等待提问</span>
           </div>
-
-          <div class="trace-intro">
-            <p>当系统找到相关过去时，这里会显示一份简单说明。想看更底层的路径、分数和来源，再展开技术轨迹。</p>
+          <div id="trace-list" class="trace-list empty" aria-live="polite">
+            <p>找到的记忆会直接显示在这里，每条都可以展开查看依据。</p>
           </div>
 
-          <details class="trace-details">
-            <summary>查看技术轨迹</summary>
+          <details class="trace-details run-details">
+            <summary>本次检索信息</summary>
             <div class="trace-summary">
               <div><span>召回路径</span><b id="recall-level">—</b></div>
               <div><span>使用记忆</span><b id="used-memory">0</b></div>
               <div><span>轨迹编号</span><b id="trace-id">—</b></div>
             </div>
-            <div id="trace-list" class="trace-list empty">
-              <p>提问之后，这里会显示被找到的记忆及其匹配依据。</p>
-            </div>
           </details>
-        </aside>
+        </section>
       </div>
 
       <div class="demo-notice">
@@ -980,6 +909,6 @@ a { color: inherit; text-decoration: none; }
   </footer>
 </div>
 
-<script type="module" src="./app.js?v=33.6"></script>
+<script type="module" src="./app.js?v=33.7"></script>
 </body>
 </html>

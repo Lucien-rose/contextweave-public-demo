@@ -4,7 +4,7 @@ const $ = (selector) => document.querySelector(selector);
 const memoryList = $("#memory-list");
 const memoryInput = $("#memory-input");
 const memoryForm = $("#memory-form");
-const chat = $("#chat");
+const notice = $("#chat");
 const prompt = $("#prompt");
 const traceList = $("#trace-list");
 let sessionId = sessionStorage.getItem(SESSION_KEY) || "";
@@ -23,14 +23,9 @@ function setConnection(label, connected) {
   $("#engine-dot").classList.toggle("live", connected);
 }
 
-function addMessage(text, who = "assistant") {
-  const message = document.createElement("div");
-  message.className = "message " + who;
-  const avatar = who === "assistant" ? '<span class="avatar">CW</span>' : "";
-  const label = who === "assistant" ? "ContextWeave 演示代理" : "本次访客";
-  message.innerHTML = avatar + "<div><p>" + esc(text) + "</p><small>" + label + "</small></div>";
-  chat.appendChild(message);
-  chat.scrollTop = chat.scrollHeight;
+function showNotice(text) {
+  notice.textContent = text;
+  notice.hidden = !text;
 }
 
 function renderMemories() {
@@ -40,7 +35,8 @@ function renderMemories() {
     (memory.sample ? "样板" : "本次访客") + " · v" + esc(memory.version || 1) + "</small></div>" +
     "<p>" + esc(memory.content) + "</p>" +
     '<div class="memory-actions"><button type="button" data-edit="' + esc(memory.id) + '">更新这条</button>' +
-    '<button type="button" data-history="' + esc(memory.id) + '">查看版本</button></div></div>'
+    '<button type="button" data-history="' + esc(memory.id) + '">查看版本</button></div>' +
+    '<div class="memory-history" data-history-for="' + esc(memory.id) + '" hidden></div></div>'
   ).join("");
   $("#memory-count").textContent = memories.length + " / 20";
 }
@@ -94,7 +90,7 @@ async function sessionRequest(path, payload = {}, { method = "POST", renew = tru
     await createSession();
     await refreshMemories();
     clearTrace("上次临时会话已过期");
-    addMessage("上次临时会话已过期，已开启新会话。旧会话的数据不会带入。");
+    showNotice("上次临时会话已过期，已开启新会话。旧会话的数据不会带入。");
     if (!renew) throw Object.assign(new Error("expired-edit"), { status: 410 });
     return send();
   }
@@ -112,28 +108,34 @@ function clearTrace(message) {
   $("#recall-level").textContent = "—";
   $("#used-memory").textContent = "0";
   $("#trace-id").textContent = "—";
+  $("#current-query").textContent = "";
   traceList.className = "trace-list empty";
   traceList.innerHTML = "<p>" + esc(message) + "</p>";
 }
 
 function renderTrace(data) {
   const items = data.memories || [];
-  $("#trace-state").textContent = items.length ? "已召回" : "未命中";
+  $("#trace-state").textContent = items.length ? "找到 " + items.length + " 条" : "未命中";
   $("#trace-state").className = items.length ? "pill" : "pill neutral";
   $("#recall-level").textContent = data.route;
   $("#used-memory").textContent = String(items.length);
   $("#trace-id").textContent = data.trace_id;
   traceList.className = items.length ? "trace-list" : "trace-list empty";
-  traceList.innerHTML = items.length ? items.map((memory) => {
+  traceList.innerHTML = items.length ? items.map((memory, index) => {
     const path = (memory.recall_path || []).join(" → ");
-    return '<div class="trace-item" data-public-id="' + esc(memory.public_id) + '">' +
-      '<div class="trace-top"><strong>' + esc(memory.tier + " · " + memory.role) +
-      '</strong><span class="score">score ' + esc(memory.score) + "</span></div><p>" +
-      esc(memory.excerpt || memory.sanitized_summary) + '</p><div class="why">' +
+    const label = { T0: "直接相关", T1: "相关线索", T2: "延伸联想" }[memory.tier] || "相关记忆";
+    return '<article class="trace-item" data-public-id="' + esc(memory.public_id) + '">' +
+      '<div class="trace-top"><span class="result-index">' + String(index + 1).padStart(2, "0") +
+      '</span><span class="pill">' + esc(memory.tier + " · " + label) + "</span></div><p>" +
+      esc(memory.excerpt || memory.sanitized_summary) + "</p>" +
+      (memory.expandable ? '<button class="expand-btn" data-expand="' + esc(memory.public_id) + '">展开记忆</button>' : "") +
+      '<div class="expanded-memory" hidden></div>' +
+      '<details class="recall-evidence"><summary>查看召回依据</summary>' +
+      '<div class="evidence-meta"><span>分数 ' + esc(memory.score) + "</span><span>" +
+      esc(memory.role) + '</span></div><div class="why">' +
       esc(memory.match_reason) + " · " + esc((memory.source_channels || []).join(" + ")) + "</div>" +
       (path ? '<div class="recall-path">' + esc(path) + "</div>" : "") +
-      (memory.expandable ? '<button class="expand-btn" data-expand="' + esc(memory.public_id) + '">展开</button>' : "") +
-      '<div class="expanded-memory" hidden></div></div>';
+      "</details></article>";
   }).join("") : "<p>本次没有找到足够相关的记忆。</p>";
 }
 
@@ -155,7 +157,7 @@ async function runAction(action) {
     if (!error.status || error.status >= 500) {
       setConnection("服务暂不可用 · 可重试", false);
     }
-    addMessage(messages[error.status] || "请求未能确认完成。输入内容仍然保留，请稍后重试。");
+    showNotice(messages[error.status] || "请求未能确认完成。输入内容仍然保留，请稍后重试。");
   } finally {
     busy = false;
     controls().forEach((control) => { control.disabled = false; });
@@ -176,7 +178,7 @@ async function saveMemory() {
   cancelEdit();
   renderMemories();
   clearTrace("记忆已变化，请重新提问");
-  addMessage(updating
+  showNotice(updating
     ? "已保存更新，旧版本保留在「查看版本」里。"
     : "已添加到本次临时记忆。更正已有偏好时，请点击对应记忆的「更新这条」。");
 }
@@ -184,30 +186,36 @@ async function saveMemory() {
 async function runPrompt(query) {
   if (!query.trim()) return;
   lastQuery = query.trim();
-  addMessage(lastQuery, "user");
+  showNotice("");
   clearTrace("正在召回…");
+  $("#current-query").textContent = "这次的问题：" + lastQuery;
   try {
     const data = await sessionRequest("/v1/demo/recall", { query: lastQuery });
     prompt.value = "";
-    addMessage(data.answer);
     renderTrace(data);
+    $("#current-query").textContent = "这次的问题：" + lastQuery;
     const state = data.retrieval;
     if (state && (!state.vector_enabled || state.vector_degraded || state.association_degraded ||
         state.index_pending || state.index_sync_failed)) {
       setConnection("Live · 检索能力暂不完整", false);
-      addMessage("本次检索能力暂不完整：向量或联想不可用，或部分索引尚未完成。结果可能有遗漏。");
+      showNotice("本次检索能力暂不完整：向量或联想不可用，或部分索引尚未完成。结果可能有遗漏。");
     }
   } catch (error) {
     clearTrace("召回未完成，请重试");
+    $("#current-query").textContent = "这次的问题：" + lastQuery;
     throw error;
   }
 }
 
 async function showHistory(id) {
   const data = await sessionRequest("/v1/demo/memories/history", { public_id: id }, { renew: false });
-  addMessage(data.versions.map((version) =>
-    "v" + version.version + (version.status === "active" ? "（当前）" : "（历史）") + "：" + version.content
-  ).join("\n"));
+  const target = memoryList.querySelector('[data-history-for="' + CSS.escape(id) + '"]');
+  if (target) {
+    target.textContent = data.versions.map((version) =>
+      "v" + version.version + (version.status === "active" ? "（当前）" : "（历史）") + "：" + version.content
+    ).join("\n");
+    target.hidden = false;
+  }
 }
 
 async function expandMemory(id) {
@@ -248,7 +256,7 @@ $("#reset-demo").addEventListener("click", () => runAction(async () => {
   await refreshMemories();
   cancelEdit();
   clearTrace("已开启新会话");
-  addMessage("已重新开始。上次会话的数据会按临时保存期限清理。");
+  showNotice("已重新开始。上次会话的数据会按临时保存期限清理。");
 }));
 memoryList.addEventListener("click", (event) => {
   const edit = event.target.closest("[data-edit]");
