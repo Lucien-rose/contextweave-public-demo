@@ -37,6 +37,9 @@ button,
 input { font: inherit; }
 
 button { color: inherit; }
+button:disabled, input:disabled { opacity: .65; cursor: wait; }
+.memory-item .memory-actions { padding: 10px 0 0; }
+.message p { white-space: pre-wrap; }
 a { color: inherit; text-decoration: none; }
 
 .shell {
@@ -868,7 +871,7 @@ a { color: inherit; text-decoration: none; }
           <div id="memory-list" class="memory-list"></div>
 
           <form id="memory-form" class="memory-form">
-            <label for="memory-input">先告诉我一件以后可能用得上的事</label>
+            <label id="memory-label" for="memory-input">先告诉我一件以后可能用得上的事</label>
             <div class="memory-form-row">
               <input id="memory-input" type="text" maxlength="240" autocomplete="off" placeholder="比如：我喜欢喝咖啡">
               <button type="submit">记住</button>
@@ -876,7 +879,8 @@ a { color: inherit; text-decoration: none; }
           </form>
 
           <div class="memory-actions">
-            <button id="clear-custom" type="button">清空我添加的</button>
+            <button id="cancel-edit" type="button" hidden>取消更新</button>
+            <button id="clear-custom" type="button">清空我的临时改动</button>
             <button id="reset-demo" type="button">重新开始</button>
           </div>
         </aside>
@@ -884,7 +888,7 @@ a { color: inherit; text-decoration: none; }
         <div class="prototype-panel chat-card">
           <div class="panel-head">
             <div><strong>现在，换一种说法问我</strong><span>看看系统会不会想起刚才那件事</span></div>
-            <div class="engine-line"><span id="engine-dot" class="engine-dot"></span><span id="engine-mode">前端预览</span></div>
+            <div class="engine-line"><span id="engine-dot" class="engine-dot"></span><span id="engine-mode">正在连接记忆服务…</span></div>
           </div>
 
           <div id="chat" class="chat">
@@ -935,7 +939,7 @@ a { color: inherit; text-decoration: none; }
 
       <div class="demo-notice">
         <strong>关于数据</strong>
-        <span>公开原型优先连接独立的 ContextWeave Public Sandbox；不可用时会自动退回浏览器预览。这里只处理样板数据与本次访客的临时记忆，不连接任何私人记忆。</span>
+        <span>这里只使用样板数据与本次访客的临时记忆，保存期限为 24 小时。服务暂不可用时会提示重试。更正已有信息，请使用记忆卡上的「更新这条」；旧版本可以展开查看。</span>
       </div>
     </section>
 
@@ -945,7 +949,7 @@ a { color: inherit; text-decoration: none; }
         <div class="section-title">
           <h2>不是“记得很多”，<br>而是“在需要时想起来”。</h2>
         </div>
-        <div class="section-note">完整 ContextWeave 还包含记忆更新、生命周期与更长期的关系判断；公开页不尝试复制整套私人系统。</div>
+        <div class="section-note">公开页支持手动更新与查看版本。自动理解整句更正意图和更长期的关系判断，属于完整系统的对话模型能力。</div>
       </div>
 
       <div class="proof-grid">
@@ -976,66 +980,6 @@ a { color: inherit; text-decoration: none; }
   </footer>
 </div>
 
-<script>
-const API_BASE = window.CONTEXTWEAVE_API_BASE || "https://archive.wingfindsmoss.com";
-const SAMPLE_MEMORIES = [
-  {id:"sample:travel-pace",type:"preference",content:"我喜欢安静、低密度的旅行安排，每天最好不要超过两个主要地点。",sample:true},
-  {id:"sample:kyoto-morning",type:"plan",content:"如果去京都，我更愿意清晨去热门寺院，避开人群。",sample:true},
-  {id:"sample:project-first",type:"decision",content:"我最近更想先把公开 Demo 做完，再考虑继续扩展功能。",sample:true},
-  {id:"sample:coffee-light",type:"preference",content:"我通常更喜欢清爽、花香、酸质明亮的咖啡。",sample:true}
-];
-const MAX_CUSTOM=16, SESSION_KEY="contextweave-demo-session-v03", CUSTOM_KEY="contextweave-demo-custom-v03";
-const memoryList=document.querySelector("#memory-list"), memoryCount=document.querySelector("#memory-count");
-const memoryForm=document.querySelector("#memory-form"), memoryInput=document.querySelector("#memory-input");
-const clearCustom=document.querySelector("#clear-custom"), resetDemo=document.querySelector("#reset-demo");
-const chat=document.querySelector("#chat"), form=document.querySelector("#prompt-form"), input=document.querySelector("#prompt");
-const traceState=document.querySelector("#trace-state"), recallLevel=document.querySelector("#recall-level");
-const usedMemory=document.querySelector("#used-memory"), traceId=document.querySelector("#trace-id"), traceList=document.querySelector("#trace-list");
-const engineMode=document.querySelector("#engine-mode"), engineDot=document.querySelector("#engine-dot");
-let sessionId=sessionStorage.getItem(SESSION_KEY)||"", memories=[...SAMPLE_MEMORIES,...loadCustom()], liveApi=false, lastQuery="";
-
-function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
-function loadCustom(){try{return JSON.parse(sessionStorage.getItem(CUSTOM_KEY)||"[]")}catch{return[]}}
-function saveCustom(){sessionStorage.setItem(CUSTOM_KEY,JSON.stringify(memories.filter(m=>!m.sample)))}
-function addMessage(text,who="user"){const el=document.createElement("div");el.className="message "+who;el.innerHTML=who==="assistant"?'<span class="avatar">CW</span><div><p>'+esc(text)+'</p><small>ContextWeave 演示代理</small></div>':'<div><p>'+esc(text)+'</p><small>本次访客</small></div>';chat.appendChild(el);chat.scrollTop=chat.scrollHeight}
-function renderMemories(){memoryList.innerHTML=memories.map(m=>'<div class="memory-item '+(m.sample?"sample":"")+'"><div class="memory-meta"><span>'+esc(m.type||"memory")+'</span><small>'+(m.sample?"样板":"本次访客")+'</small></div><p>'+esc(m.content)+'</p></div>').join("");memoryCount.textContent=memories.length+" / 20"}
-function inferType(c){if(/喜欢|偏好|不喜欢|更爱|习惯/.test(c))return"preference";if(/计划|准备|要去|打算/.test(c))return"plan";if(/优先|决定|先做|暂时/.test(c))return"decision";return"memory"}
-function expandedTerms(q){const groups=[{q:/喝|饮料|下午茶|咖啡|茶|饮品/i,terms:["咖啡","茶","饮料","饮品","口味","清爽","花香","甜","酸","咖啡因"]},{q:/旅行|京都|景点|行程|出游/i,terms:["旅行","京都","寺院","景点","行程","清晨","低密度","人群"]},{q:/项目|优先|工作|先做|重点/i,terms:["项目","优先","demo","扩展","功能","先把","决定"]}];const set=new Set(q.toLowerCase().split(/[\s，。！？,.!?、/]+/).filter(Boolean));groups.forEach(g=>{if(g.q.test(q))g.terms.forEach(t=>set.add(t.toLowerCase()))});return[...set]}
-function localRecall(q){const terms=expandedTerms(q);const ranked=memories.map(m=>{const text=m.content.toLowerCase();let hit=0;terms.forEach(t=>{if(text.includes(t))hit+=t.length>2?1.4:1});if(/喜欢|偏好/.test(m.content)&&/什么|怎么|推荐|应该/.test(q))hit+=.7;return{...m,_score:hit}}).filter(m=>m._score>0).sort((a,b)=>b._score-a._score).slice(0,3);const top=ranked[0];let answer="当前 Demo Memory 里没有足够相关的信息。你可以先添加一条记忆，再换一种说法问我。";if(top){if(/喝|饮料|下午茶|咖啡|茶|饮品/i.test(q))answer="我找到了与你的饮品选择相关的记忆："+top.content+" 如果现在要选，我会优先沿着这个偏好给建议。";else if(/旅行|京都|景点|行程|出游/i.test(q))answer="我找到了与你的行程选择相关的记忆："+top.content;else if(/项目|优先|工作|先做|重点/i.test(q))answer="我找到了与你当前项目决策相关的记忆："+top.content;else answer="这次问题让我想起了："+top.content}return{route:ranked.length?"RECALL":"NO_RECALL",answer,trace_id:"preview-"+Math.random().toString(16).slice(2,8),memories:ranked.map((m,i)=>({id:m.id,memory_type:m.type,sanitized_summary:m.content,score:Math.min(.98,.62+m._score*.07-i*.03).toFixed(2),match_reason:"semantic-preview",candidate_sources:["local-preview"]}))}}
-async function api(path,options={}){const res=await fetch(API_BASE+path,{...options,headers:{"Content-Type":"application/json",...(options.headers||{})}});if(!res.ok)throw new Error("API "+res.status);return res.json()}
-async function initLive(){if(!API_BASE)return false;try{if(!sessionId){const data=await api("/v1/demo/session",{method:"POST",body:"{}"});sessionId=data.session_id;sessionStorage.setItem(SESSION_KEY,sessionId)}const data=await api("/v1/demo/memories?session_id="+encodeURIComponent(sessionId));memories=data.memories||[];engineMode.textContent="ContextWeave Public Sandbox · Live";engineDot.classList.add("live");liveApi=true;renderMemories();return true}catch{engineMode.textContent="前端预览";engineDot.classList.remove("live");liveApi=false;return false}}
-async function addMemory(content){if(API_BASE&&sessionId){try{const data=await api("/v1/demo/memories",{method:"POST",body:JSON.stringify({session_id:sessionId,content})});memories=data.memories||memories;renderMemories();return}catch{}}const customs=memories.filter(m=>!m.sample);if(customs.length>=MAX_CUSTOM){addMessage("本次 Demo 最多添加 16 条自定义记忆。可以先清空后再试。","assistant");return}memories.push({id:"custom:"+Date.now(),type:inferType(content),content,sample:false});saveCustom();renderMemories()}
-async function recall(q){if(API_BASE&&sessionId){try{return await api("/v1/demo/recall",{method:"POST",body:JSON.stringify({session_id:sessionId,query:q})})}catch{}}return localRecall(q)}
-async function expandMemory(publicId){
-  if(!liveApi||!sessionId)return;
-  const data=await api("/v1/demo/expand",{method:"POST",body:JSON.stringify({session_id:sessionId,public_id:publicId,query:lastQuery||"展开这条记忆",detail:"relevant_chunk"})});
-  const item=data.expansion||{};
-  const target=traceList.querySelector('[data-public-id="'+CSS.escape(publicId)+'"] .expanded-memory');
-  if(target){target.hidden=false;target.textContent=item.excerpt||"没有更多可展示内容。"}
-}
-function renderTrace(data){
-  const items=data.memories||[];
-  traceState.textContent=items.length?"已召回":"未命中";
-  traceState.className=items.length?"pill":"pill neutral";
-  recallLevel.textContent=data.route||(items.length?"RECALL":"NO_RECALL");
-  usedMemory.textContent=String(items.length);
-  traceId.textContent=data.trace_id||"—";
-  if(!items.length){traceList.className="trace-list empty";traceList.innerHTML="<p>没有命中相关记忆。试试先添加「我喜欢喝咖啡」，再问「今天下午喝什么？」。</p>";return}
-  traceList.className="trace-list";
-  traceList.innerHTML=items.map(m=>{
-    const tier=m.tier||"—",role=m.role||m.memory_type||"memory";
-    const path=(m.recall_path||[]).join(" → ");
-    const expand=liveApi&&m.expandable?'<button class="expand-btn" data-expand="'+esc(m.public_id||m.id)+'">展开</button>':"";
-    return '<div class="trace-item" data-public-id="'+esc(m.public_id||m.id||"")+'"><div class="trace-top"><strong>'+esc(tier+" · "+role)+'</strong><span class="score">score '+esc(m.score??"—")+'</span></div><p>'+esc(m.sanitized_summary||m.excerpt||m.summary||"")+'</p><div class="why">'+esc(m.match_reason||"relevance-signal")+" · "+esc((m.candidate_sources||m.source_channels||[]).join(" + ")||"memory engine")+'</div>'+(path?'<div class="recall-path">'+esc(path)+'</div>':"")+expand+'<div class="expanded-memory" hidden></div></div>'
-  }).join("")
-}
-async function runPrompt(q){if(!q.trim())return;lastQuery=q.trim();addMessage(q,"user");input.value="";const data=await recall(q);addMessage(data.answer||(data.memories?.[0]?.sanitized_summary?"我想起了："+data.memories[0].sanitized_summary:"没有找到相关记忆。"),"assistant");renderTrace(data)}
-memoryForm.addEventListener("submit",async e=>{e.preventDefault();const content=memoryInput.value.trim();if(!content)return;memoryInput.value="";await addMemory(content);addMessage("已把这条内容放进本次 Demo Memory。现在可以换一种说法来问我。","assistant")});
-clearCustom.addEventListener("click",async()=>{if(API_BASE&&sessionId){try{const data=await api("/v1/demo/memories/custom",{method:"DELETE",body:JSON.stringify({session_id:sessionId})});memories=data.memories||[];renderMemories();return}catch{}}memories=[...SAMPLE_MEMORIES];saveCustom();renderMemories()});
-resetDemo.addEventListener("click",()=>{sessionStorage.removeItem(SESSION_KEY);sessionStorage.removeItem(CUSTOM_KEY);location.reload()});
-form.addEventListener("submit",e=>{e.preventDefault();runPrompt(input.value)});
-document.querySelectorAll(".suggestions button").forEach(btn=>btn.addEventListener("click",()=>runPrompt(btn.dataset.prompt)));traceList.addEventListener("click",e=>{const btn=e.target.closest("[data-expand]");if(btn)expandMemory(btn.dataset.expand).catch(()=>{btn.textContent="展开失败"})});
-renderMemories();initLive();
-</script>
+<script type="module" src="./app.js?v=33.6"></script>
 </body>
 </html>
